@@ -12,13 +12,13 @@ function App() {
       // console.log(import.meta.env.VITE_API_URL);
 
       try {
-        const resp = await fetch(`${import.meta.env.VITE_API_URL}`);
+        const resp = await fetch(`${import.meta.env.VITE_API_URL}posts`);
         if (!resp.ok) {
           throw new Error('Network response was not ok.');
         }
         const result = await resp.json();
         setData(result);
-        console.log(resp);
+        console.log(result);
       } catch (error) {
         console.log('Error fetching data:', error);
       }
