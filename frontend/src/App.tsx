@@ -28,11 +28,12 @@ import { ModeToggle } from "./components/theme-control/mode-toggle"
 function App() {
   const [count, setCount] = useState(0);
   const [data, setData] = useState([]);
-
+  
+  
   useEffect(() => {
     async function fetchData() {
       // console.log(import.meta.env.VITE_API_URL);
-
+  
       try {
         const resp = await fetch(`${import.meta.env.VITE_API_URL}posts`);
         if (!resp.ok) {
@@ -45,7 +46,7 @@ function App() {
         console.log('Error fetching data:', error);
       }
     }
-    
+
     fetchData();
   }, [])
   
@@ -53,19 +54,19 @@ function App() {
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <div className={"hidden flex-col md:flex"}>
-            <div className="flex h-14 items-center px-4 border-b">
-              <div className="ml-auto flex items-center space-x-1">
-                <ModeToggle />
-                <Avatar className={"pd-xml-auto"}>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>RL</AvatarFallback>
-                </Avatar>
-              </div>
+        <div className={"hidden flex-col md:flex"}>
+          <div className="flex h-14 items-center px-4 border-b">
+            <div className="ml-auto flex items-center space-x-1">
+              <ModeToggle />
+              <Avatar className={"pd-xml-auto"}>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>RL</AvatarFallback>
+              </Avatar>
             </div>
           </div>
-          <ContentPage />
-        </ThemeProvider>
+        </div>
+        <ContentPage />
+      </ThemeProvider>
     </>
   )
 }
