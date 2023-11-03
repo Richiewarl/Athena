@@ -1,7 +1,29 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+// Stylesheets
 import './App.css'
+
+// Page components
+import ContentPage from './course-unit-view/page'
+
+// Shadcn (atomic) components
+import { 
+  Avatar, 
+  AvatarFallback, 
+  AvatarImage } from "@/components/ui/avatar"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { ThemeProvider } from "./components/theme-control/theme-provider"
+import { ModeToggle } from "./components/theme-control/mode-toggle"
+
+// Lucide icons
+
 
 function App() {
   const [count, setCount] = useState(0);
@@ -30,26 +52,20 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <div className={"hidden flex-col md:flex"}>
+            <div className="flex h-14 items-center px-4 border-b">
+              <div className="ml-auto flex items-center space-x-1">
+                <ModeToggle />
+                <Avatar className={"pd-xml-auto"}>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>RL</AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+          </div>
+          <ContentPage />
+        </ThemeProvider>
     </>
   )
 }
