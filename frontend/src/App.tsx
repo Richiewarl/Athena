@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 // Stylesheets
 import './App.css'
+import './course-unit-view/page.css'
 
 // Page components
 import ContentPage from './course-unit-view/page'
@@ -12,13 +13,6 @@ import {
   AvatarFallback, 
   AvatarImage } from "@/components/ui/avatar"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
 import { ThemeProvider } from "./components/theme-control/theme-provider"
 import { ModeToggle } from "./components/theme-control/mode-toggle"
 
@@ -28,7 +22,6 @@ import { ModeToggle } from "./components/theme-control/mode-toggle"
 function App() {
   const [count, setCount] = useState(0);
   const [data, setData] = useState([]);
-  
   
   useEffect(() => {
     async function fetchData() {

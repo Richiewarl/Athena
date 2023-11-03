@@ -1,9 +1,10 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { VideoCards } from "./video-cards"
 
 export default function WeeklyContent() {
     return (
-        <div className="col-span-3 lg:col-span-4 lg:border-l">
-            <div className="h-full px-4 py-6 lg:px-8">
+        <main className="w-4/5 lg:border-l">
+            <div className="px-4 py-6 lg:px-8">
                 <Tabs defaultValue="videos">
                     <div className="space-between flex items-center">
                         <TabsList>
@@ -20,6 +21,9 @@ export default function WeeklyContent() {
                     </div>
                 </Tabs>
             </div>
-        </div>
+            <div className="px-4 lg:px-8">
+                <VideoCards />
+            </div>
+        </main>
     )
 }
