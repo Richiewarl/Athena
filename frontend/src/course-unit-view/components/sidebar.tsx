@@ -14,7 +14,7 @@ export function Sidebar({className}: SidebarProps) {
                 <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight"> 
                     Intro to Discrete Mathematics
                 </h2>
-                <ScrollArea className="h-[300px] px-1">
+                <ScrollArea className="h-full px-1">
                   <div className="space-y-1 p-2">
                     <Button variant="secondary" className="w-full justify-start">
                       Week 1

@@ -1,4 +1,5 @@
 import { Sidebar } from "./components/sidebar"
+import { VideoCards } from "./components/video-cards"
 import WeeklyContent from "./components/weekly-content"
 
 export default function ContentPage() {
@@ -8,6 +9,7 @@ export default function ContentPage() {
                 <div className="flex border-b">
                     <Sidebar className="hidden lg:block w-1/5" />
                     <WeeklyContent />
+                    <VideoCards className="hidden lg:block w-1/5" />
                 </div>
             </div>
         </div>

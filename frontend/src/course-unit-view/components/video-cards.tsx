@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils"
 import {
     Card,
     CardContent,
@@ -6,13 +7,17 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function VideoCards() {
+interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {
+  
+}
+
+export function VideoCards({className}: VideoCardsProps) {
     return (
-        <ScrollArea className="whitespace-nowrap rounded-md border">
-            <div className="flex w-max space-x-4 p-4 break-normal whitespace-normal">
-                <Card className="w-1/5 p-3">
+        <ScrollArea className={cn("h-full px-1", className)}>
+            <div className="flex-col w-auto">
+                <Card className="m-3 p-3">
                     <CardTitle className="text-lg">
                         Intro to Statistical Analysis
                     </CardTitle>
@@ -20,24 +25,47 @@ export function VideoCards() {
                         We introduce the baisc concepts of statistical analysis in this video.
                     </CardDescription>
                 </Card>
-                <Card className="w-1/5 p-3">
+                <Card className="m-3 p-3">
                     <CardTitle className="text-lg">
-                        Intro to Statistical Analysis
+                        Video One
                     </CardTitle>
                     <CardDescription>
-                        We introduce the baisc concepts of statistical analysis in this video.
+                        This is a very long description for my first video. 
                     </CardDescription>
                 </Card>
-                <Card className="w-1/5 p-3">
+                <Card className="m-3 p-3">
                     <CardTitle className="text-lg">
-                        Intro to Statistical Analysis
+                        Video Two
                     </CardTitle>
                     <CardDescription>
-                        We introduce the baisc concepts of statistical analysis in this video.
+                        This is a very long description for my second video. 
+                    </CardDescription>
+                </Card>
+                <Card className="m-3 p-3">
+                    <CardTitle className="text-lg">
+                        Video Three
+                    </CardTitle>
+                    <CardDescription>
+                        This is a very long description for my third video. 
+                    </CardDescription>
+                </Card>
+                <Card className="m-3 p-3">
+                    <CardTitle className="text-lg">
+                        Video Four
+                    </CardTitle>
+                    <CardDescription>
+                        This is a very long description for my fourth video. 
+                    </CardDescription>
+                </Card>
+                <Card className="m-3 p-3">
+                    <CardTitle className="text-lg">
+                        Video Five
+                    </CardTitle>
+                    <CardDescription>
+                        This is a very long description for my Fifth video. 
                     </CardDescription>
                 </Card>
             </div>
-            <ScrollBar orientation="horizontal" />
         </ScrollArea>
     )
     
