@@ -2,8 +2,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function WeeklyContent() {
     return (
-        <div className="col-span-3 lg:col-span-4 lg:border-l">
-            <div className="h-full px-4 py-6 lg:px-8">
+        <main className="md:w-full lg:w-4/5 lg:border-l border-r">
+            <div className="px-4 py-5 lg:px-8">
                 <Tabs defaultValue="videos">
                     <div className="space-between flex items-center">
                         <TabsList>
@@ -20,6 +20,6 @@ export default function WeeklyContent() {
                     </div>
                 </Tabs>
             </div>
-        </div>
+        </main>
     )
 }
