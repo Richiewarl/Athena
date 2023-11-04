@@ -56,8 +56,8 @@ export function VideoEmbed({
 
 export function VideoSizeSelector({ className }: { className?: string }) {
 	return (
-		<div className={cn("grid gap-2 w-min", className)}>
-			<Label htmlFor="video-size">Size</Label>
+		<div className={cn("flex items-center gap-2 w-min", className)}>
+			<Label htmlFor="video-size">Size:</Label>
 			<Select defaultValue="medium">
 				<SelectTrigger id="video-size" className="w-[110px]">
 					<SelectValue placeholder="Size" />
