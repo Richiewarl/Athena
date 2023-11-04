@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	src: string;
@@ -26,7 +27,12 @@ const sizeToDemension: Map<size, dimension> = new Map([
 	["large", { width: 853, height: 480 }],
 ]);
 
-export function VideoEmbed({ src, size = "medium" }: VideoEmbedProps) {
+export function VideoEmbed({
+	id,
+	className,
+	src,
+	size = "medium",
+}: VideoEmbedProps) {
 	const dimensions = sizeToDemension.get(size);
 
 	if (!dimensions) {
@@ -37,22 +43,24 @@ export function VideoEmbed({ src, size = "medium" }: VideoEmbedProps) {
 
 	return (
 		<iframe
+			id={id}
+			className={cn("", className)}
 			src={src}
 			width={width}
 			height={height}
-			style={{ border: "1px", borderColor: "black", overflow: "hidden" }}
+			style={{ overflow: "hidden" }}
 			allowFullScreen
 		/>
 	);
 }
 
-export function VideoSizeSelector() {
+export function VideoSizeSelector({ className }: { className?: string }) {
 	return (
-		<div className="grid gap-3 w-min">
+		<div className={cn("grid gap-2 w-min", className)}>
 			<Label htmlFor="video-size">Size</Label>
 			<Select defaultValue="medium">
-				<SelectTrigger id="video-size">
-					<SelectValue placeholder="Medium" />
+				<SelectTrigger id="video-size" className="w-[110px]">
+					<SelectValue placeholder="Size" />
 				</SelectTrigger>
 				<SelectContent>
 					<SelectItem value="large">Large</SelectItem>
