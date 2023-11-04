@@ -13,7 +13,7 @@ interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {
   
 }
 
-export function VideoCards({className}: VideoCardsProps) {
+export function VideoCards({ className }: VideoCardsProps) {
     return (
         <ScrollArea className={cn("h-full px-1", className)}>
             <div className="flex-col w-auto">

@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { VideoEmbed } from "./videoEmbed"
 
 export default function WeeklyContent() {
     return (
@@ -19,6 +20,12 @@ export default function WeeklyContent() {
                         </TabsList>
                     </div>
                 </Tabs>
+            </div>
+            <div className="px-4 py-2">
+                <VideoEmbed
+                    src="https://video.manchester.ac.uk/embedded/00000000-1f15-8deb-0000-0175331733c0"
+                    size="large"
+                />
             </div>
         </main>
     )

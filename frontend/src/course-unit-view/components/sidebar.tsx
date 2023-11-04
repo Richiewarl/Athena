@@ -6,7 +6,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   
 }
 
-export function Sidebar({className}: SidebarProps) {
+export function Sidebar({ className }: SidebarProps) {
   return (
     <aside className={cn("pb-12", className)}>
         <div className="space-y-4 py-4">
