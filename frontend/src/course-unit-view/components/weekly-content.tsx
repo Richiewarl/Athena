@@ -1,5 +1,4 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
 import { CourseVideoMaterialEmbed } from "./videoEmbed";
 
 export default function WeeklyContent() {
