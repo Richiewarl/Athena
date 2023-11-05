@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { VideoEmbed, VideoSizeSelector } from "./videoEmbed";
+import { CourseVideoMaterialEmbed } from "./videoEmbed";
 
 export default function WeeklyContent() {
 	return (
@@ -21,8 +21,7 @@ export default function WeeklyContent() {
 				</Tabs>
 			</div>
 			<div className="px-4 py-2 lg:px-8">
-				<VideoSizeSelector className="pb-2" />
-				<VideoEmbed
+				<CourseVideoMaterialEmbed
 					id="course-video-material"
 					className="-m-2"
 					src="https://video.manchester.ac.uk/embedded/00000000-1f15-8deb-0000-0175331733c0"
