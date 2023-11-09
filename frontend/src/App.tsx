@@ -2,14 +2,9 @@ import { useState, useEffect } from "react";
 
 // Stylesheets
 import "./App.css";
-import "./course-unit-view/page.css";
-
-// Shadcn (atomic) components
 
 // Theme
 import { ThemeProvider } from "./components/theme-control/theme-provider";
-
-// Lucide icons
 
 // Page components
 import ContentPage from "./course-unit-view/page";

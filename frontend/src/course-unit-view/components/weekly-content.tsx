@@ -1,9 +1,15 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseVideoMaterialEmbed } from "./videoEmbed";
 
-export default function WeeklyContent() {
+import { cn } from "@/lib/utils";
+
+type WeeklyContentProps = {
+	className: string;
+};
+
+export default function WeeklyContent({ className }: WeeklyContentProps) {
 	return (
-		<main className="md:w-full lg:w-4/5 lg:border-l border-r">
+		<main className={cn("col-span-3 lg:col-span-3 lg:border-l", className)}>
 			<div className="px-4 py-5 lg:px-8">
 				<Tabs defaultValue="videos">
 					<div className="space-between flex items-center">

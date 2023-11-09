@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { cn, tailwindSize, tailwindSizeWidthConverter } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	src: string;
@@ -35,13 +35,22 @@ export function CourseVideoMaterialEmbed({
 	size = "medium",
 }: VideoEmbedProps) {
 	const [selectedSize, setSelectedSize] = useState<size>(size);
+	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+	useEffect(() => {
+		function handleResize() {
+			setWindowWidth(window.innerWidth);
+		}
+
+		window.addEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(() => {}, [windowWidth]);
 
 	const dimensions = sizeToDemension.get(selectedSize);
-
 	if (!dimensions) {
 		throw new Error(`Unsupported size: ${size}`);
 	}
-
 	const { width, height } = dimensions;
 
 	return (
