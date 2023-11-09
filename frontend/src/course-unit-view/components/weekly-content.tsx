@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseVideoMaterialEmbed } from "./videoEmbed";
+import { CourseVideoMaterialEmbed } from "./video-embed";
 
 import { cn } from "@/lib/utils";
 

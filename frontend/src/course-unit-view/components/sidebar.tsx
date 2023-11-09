@@ -23,14 +23,17 @@ export function Sidebar({ className }: SidebarProps) {
 	return (
 		<aside className={cn("pb-12", className)}>
 			<div className="space-y-4 py-4">
-				<div className="px-3 py-2">
-					<h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+				<div className="py-2">
+					<h2 className="relative px-7 text-lg font-semibold tracking-tight">
 						Intro to Discrete Mathematics
 					</h2>
-					<ScrollArea className="h-full px-1">
+					<ScrollArea className="h-full px-1" id="week-list-scrollarea">
 						<div className="space-y-1 p-2">
-							{weeks.map((week: WeekData) => (
-								<Button variant="ghost" className="text-ellipsis justify-start">
+							{weeks?.map((week: WeekData) => (
+								<Button
+									variant="ghost"
+									className="block overflow-hidden text-ellipsis text-left w-full"
+								>
 									{week.title}
 								</Button>
 							))}
