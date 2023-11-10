@@ -1,3 +1,4 @@
-.vid-card {
-	width: 20%;
+/* Allow week buttons labels to truncate with ellipses */
+#week-list-scrollarea > div[data-radix-scroll-area-viewport] > div {
+	display: block !important;
 }

@@ -7,13 +7,13 @@ from .serializers import CourseUnitSerializer, WeekSerializer, VideoSerializer
 
 class CourseUnitViewSet(ModelViewSet):
     queryset = CourseUnit.objects.all()
-    serializer = CourseUnitSerializer
+    serializer_class = CourseUnitSerializer
     
 class WeekViewSet(ModelViewSet):
     queryset = Week.objects.all()
-    serializer = WeekSerializer
+    serializer_class = WeekSerializer
     
 class VideoViewSet(ModelViewSet):
     queryset = Video.objects.all()
-    serializer = VideoSerializer
+    serializer_class = VideoSerializer
     

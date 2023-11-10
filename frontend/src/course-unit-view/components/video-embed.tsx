@@ -6,9 +6,16 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	src: string;
@@ -35,13 +42,20 @@ export function CourseVideoMaterialEmbed({
 	size = "medium",
 }: VideoEmbedProps) {
 	const [selectedSize, setSelectedSize] = useState<size>(size);
+	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+	useEffect(() => {
+		function handleResize() {
+			setWindowWidth(window.innerWidth);
+		}
+
+		window.addEventListener("resize", handleResize);
+	}, []);
 
 	const dimensions = sizeToDemension.get(selectedSize);
-
 	if (!dimensions) {
 		throw new Error(`Unsupported size: ${size}`);
 	}
-
 	const { width, height } = dimensions;
 
 	return (
@@ -71,6 +85,12 @@ export function CourseVideoMaterialEmbed({
 				style={{ overflow: "hidden" }}
 				allowFullScreen
 			/>
+			<Accordion type="single" collapsible className="w-full">
+				<AccordionItem value="video-description"></AccordionItem>
+			</Accordion>
+			<h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+				test
+			</h3>
 		</>
 	);
 }

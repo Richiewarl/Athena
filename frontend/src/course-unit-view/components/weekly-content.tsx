@@ -1,9 +1,15 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CourseVideoMaterialEmbed } from "./videoEmbed";
+import { CourseVideoMaterialEmbed } from "./video-embed";
 
-export default function WeeklyContent() {
+import { cn } from "@/lib/utils";
+
+type WeeklyContentProps = {
+	className: string;
+};
+
+export default function WeeklyContent({ className }: WeeklyContentProps) {
 	return (
-		<main className="md:w-full lg:w-4/5 lg:border-l border-r">
+		<main className={cn("col-span-3 lg:col-span-3 lg:border-l", className)}>
 			<div className="px-4 py-5 lg:px-8">
 				<Tabs defaultValue="videos">
 					<div className="space-between flex items-center">
@@ -26,9 +32,6 @@ export default function WeeklyContent() {
 					src="https://video.manchester.ac.uk/embedded/00000000-1f15-8deb-0000-0175331733c0"
 					size="medium"
 				/>
-				<h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-					Intro to Statistical Analysis
-				</h3>
 			</div>
 		</main>
 	);
