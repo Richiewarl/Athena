@@ -1,5 +1,6 @@
 import { Sidebar } from "./components/sidebar";
 import { VideoCards } from "./components/video-cards";
+import { WeekDataProvider } from "./context/week-provider";
 import WeeklyContent from "./components/weekly-content";
 
 // Stylesheet
@@ -10,9 +11,11 @@ export default function ContentPage() {
 		<div className="block">
 			<div className="bg-background">
 				<div className="grid lg:grid-cols-5">
-					<Sidebar className="hidden lg:block" />
-					<WeeklyContent className="block" />
-					<VideoCards className="hidden lg:block" />
+					<WeekDataProvider>
+						<Sidebar className="hidden lg:block" />
+						<WeeklyContent className="block" />
+						<VideoCards className="hidden lg:block" />
+					</WeekDataProvider>
 				</div>
 			</div>
 		</div>

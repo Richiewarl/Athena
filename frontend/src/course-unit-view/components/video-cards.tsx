@@ -9,32 +9,31 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { getAllVideos } from "../api";
+import { getWeekVideos } from "../api";
 import { VideoData } from "../apiTypes";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useWeek } from "../context/week-provider";
 
 interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function VideoCards({ className }: VideoCardsProps) {
 	const [videos, setVideos] = useState<VideoData[]>([]);
 
+	const week = useWeek().week;
+
 	useEffect(() => {
-		getAllVideos().then((res) => {
+		getWeekVideos(week?.id).then((res) => {
 			setVideos(res.data);
 		});
-	}, []);
-
-	function log() {
-		console.log("HEY");
-	}
+	}, [week]);
 
 	return (
 		<ScrollArea className={cn("h-full px-1 border-l", className)}>
 			<div className="flex-col w-auto">
 				{videos?.map((video: VideoData) => (
 					<div
+						id="clickable-video-card"
 						key={video.id}
-						onClick={log}
 						className="hover:cursor-pointer select-none"
 					>
 						<Card className="m-3 p-3 hover:bg-secondary">

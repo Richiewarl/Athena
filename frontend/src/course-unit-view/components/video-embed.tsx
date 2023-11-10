@@ -83,6 +83,12 @@ export function CourseVideoMaterialEmbed({
 				width={width}
 				height={height}
 				style={{ overflow: "hidden" }}
+				allow="accelerometer; 
+					autoplay; 
+					clipboard-write; 
+					encrypted-media; 
+					gyroscope; 
+					picture-in-picture;"
 				allowFullScreen
 			/>
 			<Accordion type="single" collapsible className="w-full">

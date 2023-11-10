@@ -28,7 +28,7 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 			<div className="px-4 py-2 lg:px-8">
 				<CourseVideoMaterialEmbed
 					id="course-video-material"
-					className="-m-2"
+					className=""
 					src="https://video.manchester.ac.uk/embedded/00000000-1f15-8deb-0000-0175331733c0"
 					size="medium"
 				/>

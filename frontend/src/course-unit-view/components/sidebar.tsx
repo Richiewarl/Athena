@@ -7,15 +7,24 @@ import { useEffect, useState } from "react";
 
 // types
 import { WeekData } from "../apiTypes";
+import { useWeek } from "../context/week-provider";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
-	const [weeks, setWeeks] = useState([]);
+	const [weeks, setWeeks] = useState<WeekData[]>([]);
+
+	const { week, setWeek } = useWeek();
 
 	useEffect(() => {
 		getAllWeeks().then((res) => {
 			setWeeks(res.data);
+
+			if (res.data.length > 0) {
+				setWeek(res.data[0]); // set default as first week
+			} else {
+				console.log("No videos for this week");
+			}
 		});
 	}, []);
 
@@ -33,6 +42,7 @@ export function Sidebar({ className }: SidebarProps) {
 									variant="ghost"
 									className="block overflow-hidden text-ellipsis text-left w-full"
 									key={week.id}
+									onClick={() => setWeek(week)}
 								>
 									{week.title}
 								</Button>
