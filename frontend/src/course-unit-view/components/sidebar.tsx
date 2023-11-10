@@ -14,9 +14,8 @@ export function Sidebar({ className }: SidebarProps) {
 	const [weeks, setWeeks] = useState([]);
 
 	useEffect(() => {
-		const data = getAllWeeks().then((res) => {
+		getAllWeeks().then((res) => {
 			setWeeks(res.data);
-			console.log(weeks);
 		});
 	}, []);
 
@@ -33,6 +32,7 @@ export function Sidebar({ className }: SidebarProps) {
 								<Button
 									variant="ghost"
 									className="block overflow-hidden text-ellipsis text-left w-full"
+									key={week.id}
 								>
 									{week.title}
 								</Button>
