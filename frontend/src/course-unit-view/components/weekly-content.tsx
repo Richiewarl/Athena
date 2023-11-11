@@ -3,7 +3,6 @@ import { CourseVideoMaterialEmbed } from "./video-embed";
 
 import { cn } from "@/lib/utils";
 import { useVideo } from "../context/video-provider";
-import { useState } from "react";
 
 type WeeklyContentProps = {
 	className: string;
@@ -33,9 +32,8 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 				{video && (
 					<CourseVideoMaterialEmbed
 						id="course-video-material"
-						title={video.title}
+						video={video}
 						className=""
-						src={video.link}
 						size="medium"
 					/>
 				)}

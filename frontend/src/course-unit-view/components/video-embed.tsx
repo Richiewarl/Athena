@@ -16,9 +16,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { VideoData } from "../data/apiTypes";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
-	src: string;
+	video: VideoData;
 	size: size;
 }
 
@@ -37,8 +38,8 @@ const sizeToDemension: Map<size, dimension> = new Map([
 
 export function CourseVideoMaterialEmbed({
 	id,
+	video,
 	className,
-	src,
 	size = "medium",
 }: VideoEmbedProps) {
 	const [selectedSize, setSelectedSize] = useState<size>(size);
@@ -78,8 +79,9 @@ export function CourseVideoMaterialEmbed({
 			</div>
 			<iframe
 				id={id}
+				title={video.title}
 				className={cn("", className)}
-				src={src}
+				src={video.link}
 				width={width}
 				height={height}
 				style={{ overflow: "hidden" }}
@@ -92,11 +94,11 @@ export function CourseVideoMaterialEmbed({
 				allowFullScreen
 			/>
 			<Accordion type="single" collapsible className="w-full">
-				<AccordionItem value="video-description"></AccordionItem>
+				<AccordionItem value="video-description">
+					<AccordionTrigger>{video.title}</AccordionTrigger>
+					<AccordionContent>{video.description}</AccordionContent>
+				</AccordionItem>
 			</Accordion>
-			<h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-				test
-			</h3>
 		</>
 	);
 }
