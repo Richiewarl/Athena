@@ -5,6 +5,7 @@ import WeeklyContent from "./components/weekly-content";
 
 // Stylesheet
 import "./page.css";
+import { VideoDataProvider } from "./context/video-provider";
 
 export default function ContentPage() {
 	return (
@@ -13,8 +14,10 @@ export default function ContentPage() {
 				<div className="grid lg:grid-cols-5">
 					<WeekDataProvider>
 						<Sidebar className="hidden lg:block" />
-						<WeeklyContent className="block" />
-						<VideoCards className="hidden lg:block" />
+						<VideoDataProvider>
+							<WeeklyContent className="block" />
+							<VideoCards className="hidden lg:block" />
+						</VideoDataProvider>
 					</WeekDataProvider>
 				</div>
 			</div>

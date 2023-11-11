@@ -2,12 +2,16 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CourseVideoMaterialEmbed } from "./video-embed";
 
 import { cn } from "@/lib/utils";
+import { useVideo } from "../context/video-provider";
+import { useState } from "react";
 
 type WeeklyContentProps = {
 	className: string;
 };
 
 export default function WeeklyContent({ className }: WeeklyContentProps) {
+	const video = useVideo().video;
+
 	return (
 		<main className={cn("col-span-3 lg:col-span-3 lg:border-l", className)}>
 			<div className="px-4 py-5 lg:px-8">
@@ -26,12 +30,15 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 				</Tabs>
 			</div>
 			<div className="px-4 py-2 lg:px-8">
-				<CourseVideoMaterialEmbed
-					id="course-video-material"
-					className=""
-					src="https://video.manchester.ac.uk/embedded/00000000-1f15-8deb-0000-0175331733c0"
-					size="medium"
-				/>
+				{video && (
+					<CourseVideoMaterialEmbed
+						id="course-video-material"
+						title={video.title}
+						className=""
+						src={video.link}
+						size="medium"
+					/>
+				)}
 			</div>
 		</main>
 	);

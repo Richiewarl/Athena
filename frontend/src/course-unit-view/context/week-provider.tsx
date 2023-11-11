@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { WeekData } from "../apiTypes";
+import { WeekData } from "../data/apiTypes";
 
 type WeekDataProps = {
 	children: React.ReactNode;
@@ -33,7 +33,7 @@ export function useWeek() {
 	const context = useContext(WeekDataContext);
 
 	if (!context) {
-		throw new Error("useWeek must be used within a WeekProvider");
+		throw new Error("useWeek must be used within a WeekDataProvider");
 	}
 
 	return context;

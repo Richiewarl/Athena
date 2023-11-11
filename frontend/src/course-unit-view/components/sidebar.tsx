@@ -2,11 +2,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { getAllWeeks } from "../api";
+import { getAllWeeks } from "../data/api";
 import { useEffect, useState } from "react";
 
 // types
-import { WeekData } from "../apiTypes";
+import { WeekData } from "../data/apiTypes";
 import { useWeek } from "../context/week-provider";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -23,7 +23,8 @@ export function Sidebar({ className }: SidebarProps) {
 			if (res.data.length > 0) {
 				setWeek(res.data[0]); // set default as first week
 			} else {
-				console.log("No videos for this week");
+				setWeek(null);
+				console.log("No materials for this course!");
 			}
 		});
 	}, []);

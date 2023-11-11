@@ -9,5 +9,5 @@ course_unit_router.register(r'videos', VideoViewSet)
 
 
 urlpatterns = [
-    path('weeks/<int:week_id>/videos', VideoViewSet.as_view({'get': 'list'}), name='week-videos')
+    path('weeks/<int:week_id>/videos', VideoViewSet.as_view({'get': 'videos'}), name='week-videos'),
 ]

@@ -14,3 +14,7 @@ export function getAllVideos() {
 export function getWeekVideos(week_id?: number) {
 	return axios.get(`${apiDomain}/weeks/${week_id}/videos`);
 }
+
+export function getVideo(video_id?: number) {
+	return axios.get(`${apiDomain}/videos/${video_id}`);
+}
