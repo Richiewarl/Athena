@@ -19,37 +19,48 @@ interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function VideoCards({ className }: VideoCardsProps) {
 	const [videos, setVideos] = useState<VideoData[]>([]);
+	const [selectedVideo, setSelectedVideo] = useState<VideoData | null>();
 
 	const week = useWeek().week;
+	const setVideo = useVideo().setVideo;
+
+	function updateSelectedVideo(video?: VideoData) {
+		if (video) {
+			setVideo(video);
+			setSelectedVideo(video);
+		} else {
+			setVideo(null);
+			setSelectedVideo(null);
+			console.log("No videos for this week!");
+		}
+	}
 
 	useEffect(() => {
 		if (week) {
 			getWeekVideos(week?.id).then((res) => {
 				setVideos(res.data);
 
-				if (res.data.length > 0) {
-					setVideo(res.data[0]); // set default as first week
-				} else {
-					setVideo(null);
-					console.log("No videos for this week!");
-				}
+				// set default as first video
+				updateSelectedVideo(res.data[0]);
 			});
 		}
 	}, [week]);
-
-	const setVideo = useVideo().setVideo;
 
 	return (
 		<ScrollArea className={cn("h-full px-1 border-l", className)}>
 			<div className="flex-col w-auto">
 				{videos?.map((video: VideoData) => (
 					<div
-						id="clickable-video-card"
+						id={`video-card-${video.id}`}
 						key={video.id}
-						className="hover:cursor-pointer select-none"
-						onClick={() => setVideo(video)}
+						className="select-none clickable-video-card"
+						onClick={() => updateSelectedVideo(video)}
 					>
-						<Card className="m-3 p-3 hover:bg-secondary">
+						<Card
+							className={`m-3 p-3 hover:cursor-pointer ${
+								selectedVideo == video ? "bg-secondary" : "hover:bg-secondary"
+							}`}
+						>
 							<CardTitle className="text-lg">{video.title}</CardTitle>
 							<CardDescription>{video.description}</CardDescription>
 						</Card>

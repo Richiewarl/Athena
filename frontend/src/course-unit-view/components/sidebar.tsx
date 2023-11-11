@@ -13,19 +13,27 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
 	const [weeks, setWeeks] = useState<WeekData[]>([]);
+	const [selectedWeek, setSelectedWeek] = useState<WeekData | null>();
 
-	const { week, setWeek } = useWeek();
+	const setWeek = useWeek().setWeek;
+
+	function updateSelectedWeek(week?: WeekData) {
+		if (week) {
+			setWeek(week);
+			setSelectedWeek(week);
+		} else {
+			setWeek(null);
+			setSelectedWeek(null);
+			console.log("No materials for this course!");
+		}
+	}
 
 	useEffect(() => {
 		getAllWeeks().then((res) => {
 			setWeeks(res.data);
 
-			if (res.data.length > 0) {
-				setWeek(res.data[0]); // set default as first week
-			} else {
-				setWeek(null);
-				console.log("No materials for this course!");
-			}
+			// set default as first week
+			updateSelectedWeek(res.data[0]);
 		});
 	}, []);
 
@@ -40,10 +48,10 @@ export function Sidebar({ className }: SidebarProps) {
 						<div className="space-y-1 p-2">
 							{weeks?.map((week: WeekData) => (
 								<Button
-									variant="ghost"
+									variant={selectedWeek == week ? "secondary" : "ghost"}
 									className="block overflow-hidden text-ellipsis text-left w-full"
 									key={week.id}
-									onClick={() => setWeek(week)}
+									onClick={() => updateSelectedWeek(week)}
 								>
 									{week.title}
 								</Button>

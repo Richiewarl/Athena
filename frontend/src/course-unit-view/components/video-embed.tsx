@@ -93,7 +93,11 @@ export function CourseVideoMaterialEmbed({
 					picture-in-picture;"
 				allowFullScreen
 			/>
-			<Accordion type="single" collapsible className="w-full">
+			<Accordion
+				type="single"
+				collapsible
+				className="w-full bg-secondary px-2 rounded-lg"
+			>
 				<AccordionItem value="video-description">
 					<AccordionTrigger>{video.title}</AccordionTrigger>
 					<AccordionContent>{video.description}</AccordionContent>
