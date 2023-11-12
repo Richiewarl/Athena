@@ -58,7 +58,7 @@ export function CourseUnitCombobox() {
 					aria-expanded={open}
 					className="w-[220px] justify-between"
 				>
-					<span className="block row overflow-hidden text-ellipsis">
+					<span className="block overflow-hidden text-ellipsis">
 						{selectedCourseUnit
 							? `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title}`
 							: "Select course unit..."}
