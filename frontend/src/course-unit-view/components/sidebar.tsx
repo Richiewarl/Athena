@@ -49,7 +49,7 @@ export function Sidebar({ className }: SidebarProps) {
 							{weeks?.map((week: WeekData) => (
 								<Button
 									variant={selectedWeek == week ? "secondary" : "ghost"}
-									className="block overflow-hidden text-ellipsis text-left w-full"
+									className="overflow-hidden text-ellipsis text-left w-full"
 									key={week.id}
 									onClick={() => updateSelectedWeek(week)}
 								>
