@@ -14,6 +14,7 @@ import { VideoData } from "../data/apiTypes";
 import { useEffect, useState } from "react";
 import { useWeek } from "../context/week-provider";
 import { useVideo } from "../context/video-provider";
+import { useCourseUnit } from "@/top-menubar/context/course-unit-provider";
 
 interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -22,6 +23,7 @@ export function VideoCards({ className }: VideoCardsProps) {
 	const [selectedVideo, setSelectedVideo] = useState<VideoData | null>();
 
 	const week = useWeek().week;
+	const courseUnit = useCourseUnit().courseUnit;
 	const setVideo = useVideo().setVideo;
 
 	function updateSelectedVideo(video?: VideoData) {
@@ -37,14 +39,14 @@ export function VideoCards({ className }: VideoCardsProps) {
 
 	useEffect(() => {
 		if (week) {
-			getWeekVideos(week?.id).then((res) => {
+			getWeekVideos(week.id).then((res) => {
 				setVideos(res.data);
 
 				// set default as first video
 				updateSelectedVideo(res.data[0]);
 			});
 		}
-	}, [week]);
+	}, [week, courseUnit]);
 
 	return (
 		<ScrollArea className={cn("h-full px-1 border-l", className)}>

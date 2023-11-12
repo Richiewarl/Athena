@@ -9,6 +9,13 @@ class CourseUnitViewSet(ModelViewSet):
     queryset = CourseUnit.objects.all()
     serializer_class = CourseUnitSerializer
     
+    @action(detail=True, methods=['get'])
+    def weeks(self, request, pk=None):
+        course_unit = self.get_object()
+        weeks = Week.objects.filter(course_unit_id=course_unit)
+        serializer = WeekSerializer(weeks, many=True)
+        return Response(serializer.data)
+    
 class WeekViewSet(ModelViewSet):
     queryset = Week.objects.all()
     serializer_class = WeekSerializer

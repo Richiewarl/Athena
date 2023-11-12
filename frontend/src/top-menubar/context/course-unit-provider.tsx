@@ -18,9 +18,13 @@ export function CourseUnitDataProvider({ children }: CourseUnitDataProps) {
 	const [selectedCourseUnit, setSelectedCourseUnit] =
 		useState<CourseUnitData | null>(null);
 
+	function test(courseUnit: CourseUnitData | null) {
+		setSelectedCourseUnit(courseUnit);
+	}
+
 	const value = {
 		courseUnit: selectedCourseUnit,
-		setCourseUnit: setSelectedCourseUnit,
+		setCourseUnit: test,
 	};
 
 	return (
@@ -34,7 +38,7 @@ export function useCourseUnit() {
 	const context = useContext(CourseUnitContext);
 
 	if (!context) {
-		throw new Error("useVideo must be used within a VideoDataProvider");
+		throw new Error("useCourseUnit must be used within a VideoDataProvider");
 	}
 
 	return context;

@@ -15,7 +15,7 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { VideoData } from "../data/apiTypes";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
@@ -43,15 +43,6 @@ export function CourseVideoMaterialEmbed({
 	size = "medium",
 }: VideoEmbedProps) {
 	const [selectedSize, setSelectedSize] = useState<size>(size);
-	const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
-	useEffect(() => {
-		function handleResize() {
-			setWindowWidth(window.innerWidth);
-		}
-
-		window.addEventListener("resize", handleResize);
-	}, []);
 
 	const dimensions = sizeToDemension.get(selectedSize);
 	if (!dimensions) {

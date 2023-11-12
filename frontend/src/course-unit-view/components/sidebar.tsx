@@ -2,12 +2,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { getAllWeeks } from "../data/api";
+import { getCourseUnitWeeks } from "../data/api";
 import { useEffect, useState } from "react";
 
 // types
 import { WeekData } from "../data/apiTypes";
 import { useWeek } from "../context/week-provider";
+import { useCourseUnit } from "@/top-menubar/context/course-unit-provider";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -15,6 +16,7 @@ export function Sidebar({ className }: SidebarProps) {
 	const [weeks, setWeeks] = useState<WeekData[]>([]);
 	const [selectedWeek, setSelectedWeek] = useState<WeekData | null>();
 
+	const courseUnit = useCourseUnit().courseUnit;
 	const setWeek = useWeek().setWeek;
 
 	function updateSelectedWeek(week?: WeekData) {
@@ -29,13 +31,15 @@ export function Sidebar({ className }: SidebarProps) {
 	}
 
 	useEffect(() => {
-		getAllWeeks().then((res) => {
-			setWeeks(res.data);
+		if (courseUnit) {
+			getCourseUnitWeeks(courseUnit.id).then((res) => {
+				setWeeks(res.data);
 
-			// set default as first week
-			updateSelectedWeek(res.data[0]);
-		});
-	}, []);
+				// set default as first week
+				updateSelectedWeek(res.data[0]);
+			});
+		}
+	}, [courseUnit]);
 
 	return (
 		<aside className={cn("pb-12", className)}>

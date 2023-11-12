@@ -8,9 +8,7 @@ export default function TopMenubar() {
 	return (
 		<div className={"flex-col md:flex"}>
 			<div className="flex h-14 items-center px-4 border-b">
-				<CourseUnitDataProvider>
-					<CourseUnitCombobox />
-				</CourseUnitDataProvider>
+				<CourseUnitCombobox />
 				<div className="ml-auto flex items-center space-x-1">
 					<ModeToggle />
 					<Avatar className={"pd-xml-auto"}>
