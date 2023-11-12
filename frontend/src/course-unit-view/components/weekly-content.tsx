@@ -3,6 +3,7 @@ import { CourseVideoMaterialEmbed } from "./video-embed";
 
 import { cn } from "@/lib/utils";
 import { useVideo } from "../context/video-provider";
+import { useCourseUnit } from "@/top-menubar/context/course-unit-provider";
 
 type WeeklyContentProps = {
 	className: string;

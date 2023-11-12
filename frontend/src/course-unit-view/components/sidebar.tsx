@@ -38,6 +38,9 @@ export function Sidebar({ className }: SidebarProps) {
 				// set default as first week
 				updateSelectedWeek(res.data[0]);
 			});
+		} else {
+			setWeeks([]);
+			updateSelectedWeek();
 		}
 	}, [courseUnit]);
 

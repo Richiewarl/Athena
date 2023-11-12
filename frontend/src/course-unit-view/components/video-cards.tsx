@@ -45,6 +45,9 @@ export function VideoCards({ className }: VideoCardsProps) {
 				// set default as first video
 				updateSelectedVideo(res.data[0]);
 			});
+		} else {
+			setVideos([]);
+			updateSelectedVideo();
 		}
 	}, [week, courseUnit]);
 
