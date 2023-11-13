@@ -62,12 +62,26 @@ export function VideoCards({ className }: VideoCardsProps) {
 						onClick={() => updateSelectedVideo(video)}
 					>
 						<Card
-							className={`m-3 p-3 hover:cursor-pointer ${
-								selectedVideo == video ? "bg-secondary" : "hover:bg-secondary"
+							className={`flex flex-col gap-3 m-3 p-3 hover:cursor-pointer ${
+								selectedVideo == video
+									? "bg-secondary border-2 border-foreground"
+									: "hover:bg-secondary"
 							}`}
+							tabIndex={0}
 						>
-							<CardTitle className="text-lg">{video.title}</CardTitle>
-							<CardDescription>{video.description}</CardDescription>
+							<CardHeader className="p-0">
+								<img
+									src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+									alt="Photo by Drew Beamer"
+									className="h-[80px] rounded-md object-cover"
+								/>
+							</CardHeader>
+							<div>
+								<CardTitle className="text-lg">{video.title}</CardTitle>
+								<CardDescription>
+									{video.uploaded_at.toString()}
+								</CardDescription>
+							</div>
 						</Card>
 					</div>
 				))}

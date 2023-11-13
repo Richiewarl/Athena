@@ -12,7 +12,7 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 	const video = useVideo().video;
 
 	return (
-		<main className={cn("col-span-3 lg:col-span-3 lg:border-l", className)}>
+		<main className={cn("lg:border-l", className)}>
 			<div className="px-4 py-5 lg:px-8">
 				<Tabs defaultValue="videos">
 					<div className="space-between flex items-center">
