@@ -52,7 +52,7 @@ export function VideoCards({ className }: VideoCardsProps) {
 	}, [week]);
 
 	return (
-		<ScrollArea className={cn("h-full px-1 border-l", className)}>
+		<ScrollArea className={cn("px-1 py-2 border-l", className)}>
 			<div className="flex-col w-auto">
 				{videos?.map((video: VideoData) => (
 					<div

@@ -46,28 +46,26 @@ export function Sidebar({ className }: SidebarProps) {
 
 	return (
 		<aside className={cn("pb-12", className)}>
-			<div className="space-y-4 py-4">
-				<div className="py-2">
-					<h2 className="relative px-7 text-lg font-semibold tracking-tight">
-						Intro to Discrete Mathematics
-					</h2>
-					<ScrollArea className="h-full px-1" id="week-list-scrollarea">
-						<div className="space-y-1 p-2">
-							{weeks?.map((week: WeekData) => (
-								<Button
-									variant={selectedWeek == week ? "secondary" : "ghost"}
-									className="w-full row-full justify-start font-normal"
-									key={week.id}
-									onClick={() => updateSelectedWeek(week)}
-								>
-									<span className="block overflow-hidden text-ellipsis">
-										{week.title}
-									</span>
-								</Button>
-							))}
-						</div>
-					</ScrollArea>
-				</div>
+			<div className="py-4">
+				<h2 className="pb-2 relative px-7 text-lg font-semibold tracking-tight">
+					{courseUnit?.title}
+				</h2>
+				<ScrollArea className="h-full px-1" id="week-list-scrollarea">
+					<div className="space-y-1 p-2">
+						{weeks?.map((week: WeekData) => (
+							<Button
+								variant={selectedWeek == week ? "secondary" : "ghost"}
+								className="w-full row-full justify-start font-normal"
+								key={week.id}
+								onClick={() => updateSelectedWeek(week)}
+							>
+								<span className="block overflow-hidden text-ellipsis">
+									{week.title}
+								</span>
+							</Button>
+						))}
+					</div>
+				</ScrollArea>
 			</div>
 		</aside>
 	);

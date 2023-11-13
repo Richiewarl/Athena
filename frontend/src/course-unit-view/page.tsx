@@ -9,7 +9,7 @@ import { VideoDataProvider } from "./context/video-provider";
 
 export default function ContentPage() {
 	return (
-		<div className="block">
+		<div className="block border-b">
 			<div className="bg-background">
 				<div className="grid lg:grid-cols-5">
 					<WeekDataProvider>
