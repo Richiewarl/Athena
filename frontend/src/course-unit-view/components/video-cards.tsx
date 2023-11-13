@@ -64,7 +64,7 @@ export function VideoCards({ className }: VideoCardsProps) {
 						<Card
 							className={`flex flex-col gap-3 m-3 p-3 hover:cursor-pointer ${
 								selectedVideo == video
-									? "bg-secondary border-2 border-foreground"
+									? "bg-secondary border-2 border-muted-foreground"
 									: "hover:bg-secondary"
 							}`}
 							tabIndex={0}
