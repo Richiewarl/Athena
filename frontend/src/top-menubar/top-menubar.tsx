@@ -2,7 +2,6 @@ import { ModeToggle } from "../components/theme-control/mode-toggle";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CourseUnitCombobox } from "./components/course-unit-combobox";
-import { CourseUnitDataProvider } from "./context/course-unit-provider";
 
 export default function TopMenubar() {
 	return (

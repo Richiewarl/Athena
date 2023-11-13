@@ -32,7 +32,6 @@ export function CourseUnitCombobox() {
 	const [open, setOpen] = useState(false);
 
 	const setCourseUnit = useCourseUnit().setCourseUnit;
-	const courseUnit = useCourseUnit().courseUnit;
 
 	function updateSelectedCourseUnit(courseUnit: CourseUnitData) {
 		setCourseUnit(courseUnit);

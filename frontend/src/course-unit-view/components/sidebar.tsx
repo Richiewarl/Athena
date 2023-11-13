@@ -26,7 +26,7 @@ export function Sidebar({ className }: SidebarProps) {
 		} else {
 			setWeek(null);
 			setSelectedWeek(null);
-			console.log("No materials for this course!");
+			// console.log("No materials for this course!");
 		}
 	}
 

@@ -49,7 +49,7 @@ export function VideoCards({ className }: VideoCardsProps) {
 			setVideos([]);
 			updateSelectedVideo();
 		}
-	}, [week, courseUnit]);
+	}, [week]);
 
 	return (
 		<ScrollArea className={cn("h-full px-1 border-l", className)}>
