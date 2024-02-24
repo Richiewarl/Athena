@@ -1,36 +1,13 @@
 import { ModeToggle } from "../components/theme-control/mode-toggle";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CourseUnitCombobox } from "./course-unit-combobox";
-
-const frameworks = [
-	{
-		value: "next.js",
-		label: "Next.js",
-	},
-	{
-		value: "sveltekit",
-		label: "SvelteKit",
-	},
-	{
-		value: "nuxt.js",
-		label: "Nuxt.js",
-	},
-	{
-		value: "remix",
-		label: "Remix",
-	},
-	{
-		value: "astro",
-		label: "Astro",
-	},
-];
+import { CourseUnitCombobox } from "./components/course-unit-combobox";
 
 export default function TopMenubar() {
 	return (
-		<div className={"hidden flex-col md:flex"}>
+		<div className={"flex-col md:flex"}>
 			<div className="flex h-14 items-center px-4 border-b">
-				<CourseUnitCombobox data={frameworks} />
+				<CourseUnitCombobox />
 				<div className="ml-auto flex items-center space-x-1">
 					<ModeToggle />
 					<Avatar className={"pd-xml-auto"}>

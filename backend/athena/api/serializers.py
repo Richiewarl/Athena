@@ -14,4 +14,4 @@ class WeekSerializer(ModelSerializer):
 class VideoSerializer(ModelSerializer):
     class Meta:
         model = Video
-        fields = ('id', 'title', 'description', 'uploaded_at', 'week_id')
+        fields = ('id', 'title', 'description', 'uploaded_at', 'link', 'week_id')

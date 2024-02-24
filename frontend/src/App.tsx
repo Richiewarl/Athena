@@ -9,13 +9,16 @@ import { ThemeProvider } from "./components/theme-control/theme-provider";
 // Page components
 import ContentPage from "./course-unit-view/page";
 import TopMenubar from "./top-menubar/top-menubar";
+import { CourseUnitDataProvider } from "./top-menubar/context/course-unit-provider";
 
 function App() {
 	return (
 		<>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-				<TopMenubar />
-				<ContentPage />
+				<CourseUnitDataProvider>
+					<TopMenubar />
+					<ContentPage />
+				</CourseUnitDataProvider>
 			</ThemeProvider>
 		</>
 	);
