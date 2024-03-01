@@ -1,11 +1,14 @@
-import { Sidebar } from "./components/sidebar";
-import { VideoCards } from "./components/video-cards";
-import { WeekDataProvider } from "./context/week-provider";
+// Components
+import Sidebar from "./components/sidebar";
+import VideoCards from "./components/video-cards";
 import WeeklyContent from "./components/weekly-content";
 
 // Stylesheet
 import "./page.css";
+
+// Context Providers
 import { VideoDataProvider } from "./context/video-provider";
+import { WeekDataProvider } from "./context/week-provider";
 
 export default function ContentPage() {
 	return (

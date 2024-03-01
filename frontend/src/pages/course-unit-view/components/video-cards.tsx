@@ -14,11 +14,11 @@ import { VideoData } from "../data/apiTypes";
 import { useEffect, useState } from "react";
 import { useWeek } from "../context/week-provider";
 import { useVideo } from "../context/video-provider";
-import { useCourseUnit } from "@/top-menubar/context/course-unit-provider";
+import { useCourseUnit } from "@/pages/top-menubar/context/course-unit-provider";
 
 interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function VideoCards({ className }: VideoCardsProps) {
+export default function VideoCards({ className }: VideoCardsProps) {
 	const [videos, setVideos] = useState<VideoData[]>([]);
 	const [selectedVideo, setSelectedVideo] = useState<VideoData | null>();
 

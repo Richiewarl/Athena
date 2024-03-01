@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 // types
 import { WeekData } from "../data/apiTypes";
 import { useWeek } from "../context/week-provider";
-import { useCourseUnit } from "@/top-menubar/context/course-unit-provider";
+import { useCourseUnit } from "@/pages/top-menubar/context/course-unit-provider";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function Sidebar({ className }: SidebarProps) {
+export default function Sidebar({ className }: SidebarProps) {
 	const [weeks, setWeeks] = useState<WeekData[]>([]);
 	const [selectedWeek, setSelectedWeek] = useState<WeekData | null>();
 

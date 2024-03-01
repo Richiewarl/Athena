@@ -23,7 +23,7 @@ import { useCourseUnit } from "../context/course-unit-provider";
 import { HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useMutationObserver } from "@/hooks/use-mutation-observer";
 
-export function CourseUnitCombobox() {
+export default function CourseUnitCombobox() {
 	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>();
 	const [selectedCourseUnit, setSelectedCourseUnit] =
 		useState<CourseUnitData | null>();

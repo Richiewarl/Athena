@@ -1,7 +1,8 @@
-import { ModeToggle } from "../components/theme-control/mode-toggle";
+import { ModeToggle } from "../../components/theme-control/mode-toggle";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CourseUnitCombobox } from "./components/course-unit-combobox";
+import CourseUnitCombobox from "./components/course-unit-combobox";
+import UserNav from "./components/user-nav";
 
 export default function TopMenubar() {
 	return (
@@ -10,10 +11,7 @@ export default function TopMenubar() {
 				<CourseUnitCombobox />
 				<div className="ml-auto flex items-center space-x-1">
 					<ModeToggle />
-					<Avatar className={"pd-xml-auto"}>
-						<AvatarImage src="https://github.com/shadcn.png" />
-						<AvatarFallback>RL</AvatarFallback>
-					</Avatar>
+					<UserNav />
 				</div>
 			</div>
 		</div>
