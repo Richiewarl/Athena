@@ -1,7 +1,0 @@
-{
-  "devDependencies": {
-    "@types/uniqid": "^5.3.4",
-    "react-router-dom": "^6.22.1",
-    "uniqid": "^5.4.0"
-  }
-}
