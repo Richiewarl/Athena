@@ -1,26 +1,20 @@
-import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Stylesheets
 import "./App.css";
 
-// Theme
-import { ThemeProvider } from "./components/theme-control/theme-provider";
-
 // Page components
-import ContentPage from "./course-unit-view/page";
-import TopMenubar from "./top-menubar/top-menubar";
-import { CourseUnitDataProvider } from "./top-menubar/context/course-unit-provider";
+import Homepage from "./pages/page";
+import Auth from "./authentication/authenticator";
 
 function App() {
 	return (
-		<>
-			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-				<CourseUnitDataProvider>
-					<TopMenubar />
-					<ContentPage />
-				</CourseUnitDataProvider>
-			</ThemeProvider>
-		</>
+		<BrowserRouter>
+			<Routes>
+				<Route path="/" element={<Auth />} />
+				<Route path="/homepage" element={<Homepage />} />
+			</Routes>
+		</BrowserRouter>
 	);
 }
 
