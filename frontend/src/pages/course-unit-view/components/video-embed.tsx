@@ -13,14 +13,17 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import Comments from "./comments";
+
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+
 import { VideoData } from "../data/apiTypes";
+import { useVideo } from "../context/video-provider";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
-	size: size;
 }
 
 type size = "small" | "medium" | "large";
@@ -38,17 +41,14 @@ const sizeToDemension: Map<size, dimension> = new Map([
 
 export function CourseVideoMaterialEmbed({
 	id,
-	video,
 	className,
-	size = "medium",
+	video,
 }: VideoEmbedProps) {
+	let size: size = "medium";
 	const [selectedSize, setSelectedSize] = useState<size>(size);
 
 	const dimensions = sizeToDemension.get(selectedSize);
-	if (!dimensions) {
-		throw new Error(`Unsupported size: ${size}`);
-	}
-	const { width, height } = dimensions;
+	const { width, height } = dimensions ?? { width: 660, height: 380 };
 
 	return (
 		<>
@@ -87,13 +87,14 @@ export function CourseVideoMaterialEmbed({
 			<Accordion
 				type="single"
 				collapsible
-				className="w-full bg-secondary px-2 rounded-lg"
+				className="w-full bg-secondary px-2 my-2 rounded-lg"
 			>
 				<AccordionItem value="video-description">
 					<AccordionTrigger>{video.title}</AccordionTrigger>
 					<AccordionContent>{video.description}</AccordionContent>
 				</AccordionItem>
 			</Accordion>
+			<Comments video={video} />
 		</>
 	);
 }

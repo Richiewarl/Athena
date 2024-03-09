@@ -30,12 +30,13 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 			</div>
 			<div className="px-4 py-2 lg:px-8">
 				{video && (
-					<CourseVideoMaterialEmbed
-						id="course-video-material"
-						video={video}
-						className=""
-						size="medium"
-					/>
+					<>
+						<CourseVideoMaterialEmbed
+							id="course-video-material"
+							className=""
+							video={video}
+						/>
+					</>
 				)}
 			</div>
 		</main>
