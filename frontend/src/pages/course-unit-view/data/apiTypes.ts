@@ -12,10 +12,12 @@ export interface VideoData {
 	description: string;
 	uploaded_at: string; // DateTime timestamp
 	link: string;
+	thumbnail: string;
 	week_id: number;
 }
 
 export interface CommentData {
+	id: number;
 	fullname: string;
 	username: string;
 	body: string;
@@ -26,3 +28,5 @@ export interface CommentData {
 	video_id: number;
 	parent_comment_id: number | null;
 }
+
+export type AddNewCommentData = Omit<CommentData, "id">;

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CommentData } from "./apiTypes";
+import { AddNewCommentData, CommentData } from "./apiTypes";
 
 const apiDomain: string = import.meta.env.VITE_API_URL;
 
@@ -11,7 +11,7 @@ export function getAllWeeks() {
 	return axios.get(`${apiDomain}/weeks/`);
 }
 
-export function getCourseUnitWeeks(course_unit_id?: number) {
+export function getCourseUnitWeeks(course_unit_id: number) {
 	return axios.get(`${apiDomain}/course_units/${course_unit_id}/weeks/`);
 }
 
@@ -20,17 +20,23 @@ export function getAllVideos() {
 	return axios.get(`${apiDomain}/videos`);
 }
 
-export function getWeekVideos(week_id?: number) {
+export function getWeekVideos(week_id: number) {
 	return axios.get(`${apiDomain}/weeks/${week_id}/videos/`);
 }
 
-export function getVideo(video_id?: number) {
+export function getVideo(video_id: number) {
 	return axios.get(`${apiDomain}/videos/${video_id}/`);
 }
 
 // comments
-export async function postComment(data: CommentData) {
-	return axios.post(`${apiDomain}/comments/`, data).then((res) => {
-		console.log(res);
-	});
+export async function postComment(data: CommentData | AddNewCommentData) {
+	return axios.post(`${apiDomain}/comments/`, data);
+}
+
+export function getVideoComments(video_id: number) {
+	return axios.get(`${apiDomain}/videos/${video_id}/comments/`);
+}
+
+export function getCommentReplies(comment_id: number) {
+	return axios.get(`${apiDomain}/comment/${comment_id}/replies/`);
 }

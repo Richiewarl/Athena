@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,9 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { HoverCard } from "@/components/ui/hover-card";
 import { getAllCourseUnits } from "../data/api";
 import { CourseUnitData } from "../data/apiTypes";
 import { useCourseUnit } from "../context/course-unit-provider";
-import { HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useMutationObserver } from "@/hooks/use-mutation-observer";
 
 export default function CourseUnitCombobox() {
 	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>();
@@ -68,8 +65,8 @@ export default function CourseUnitCombobox() {
 				<Command loop>
 					<CommandInput placeholder="Search course units..." />
 					<CommandEmpty>No course unit found</CommandEmpty>
-					{courseUnits?.map((unit: any) => (
-						<CommandGroup>
+					<CommandGroup>
+						{courseUnits?.map((unit: any) => (
 							<CommandItem
 								key={unit.id}
 								value={`${unit.course_code}: ${unit.title}`}
@@ -87,8 +84,8 @@ export default function CourseUnitCombobox() {
 								/>
 								{`${unit.course_code}: ${unit.title}`}
 							</CommandItem>
-						</CommandGroup>
-					))}
+						))}
+					</CommandGroup>
 				</Command>
 			</PopoverContent>
 		</Popover>
