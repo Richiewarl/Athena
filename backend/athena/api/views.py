@@ -1,7 +1,7 @@
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from rest_framework import pagination, generics
 from ..models import CourseUnit, Week, Video, Comment
 from .serializers import CourseUnitSerializer, WeekSerializer, VideoSerializer, CommentSerializer
 
@@ -26,10 +26,20 @@ class WeekViewSet(ModelViewSet):
         videos = Video.objects.filter(week_id=week)
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
-         
+    
+class VideoCommentPagination(pagination.PageNumberPagination):
+    page_size = 10  
 class VideoViewSet(ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
+    pagination_class = VideoCommentPagination
+
+    @action(detail=True, methods=['get'])
+    def comments(self, request, pk=None):
+        video = self.get_object()
+        comments = Comment.objects.filter(video_id=video)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
     
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
@@ -42,8 +52,3 @@ class CommentViewSet(ModelViewSet):
         serializer = CommentSerializer(replies, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'])
-    def root_level_comments(self, request, pk=None):
-        root_comments = Comment.objects.filter(parent_comment_id__isnull=True) 
-        serializer = CommentSerializer(root_comments, many=True)
-        return Response(serializer.data)
