@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { UserData } from "@/authentication/data/userTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,8 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 import { AddNewCommentData, CommentData, VideoData } from "../data/apiTypes";
-import { getVideoComments, postComment } from "../data/api";
-import { CornerDownRight, Reply, ThumbsDown, ThumbsUp } from "lucide-react";
+import { getCommentReplies, getVideoComments, postComment } from "../data/api";
+import {
+	ArrowDown,
+	ArrowUp,
+	CornerDownRight,
+	ThumbsDown,
+	ThumbsUp,
+} from "lucide-react";
+
+import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
@@ -24,13 +33,19 @@ export default function Comments({ video }: CommentProps) {
 
 	return (
 		<div id="comment-section" className="">
-			<AddCommentBlock video={video} comment_id={-1} />
+			<AddCommentBlock
+				video={video}
+				comment_id={null}
+				setOpenReplyTextbox={null}
+			/>
 			{comments.map((comment: CommentData) => (
 				<PostedCommentBlock
 					key={comment.id}
 					initials={"N/A"}
+					parent_comment={null}
 					comment={comment}
 					video={video}
+					depth={0}
 				/>
 			))}
 		</div>
@@ -39,16 +54,16 @@ export default function Comments({ video }: CommentProps) {
 
 interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
-	comment_id: number;
-	setOpenReply: Function;
+	comment_id: number | null;
+	setOpenReplyTextbox: Function | null;
 }
 
 function AddCommentBlock({
 	video,
 	comment_id,
-	setOpenReply,
+	setOpenReplyTextbox,
 }: AddCommentBlockProps) {
-	const isReply: boolean = comment_id != -1;
+	const isReply: boolean = Boolean(comment_id && setOpenReplyTextbox);
 
 	// initialise user details
 	const userJson = localStorage.getItem("user-data");
@@ -68,6 +83,7 @@ function AddCommentBlock({
 
 	// commenting logic
 	const [commentText, setCommentText] = useState<string>("");
+	const { toast } = useToast();
 
 	const handleCommentChange = (
 		event: React.ChangeEvent<HTMLTextAreaElement>
@@ -75,7 +91,10 @@ function AddCommentBlock({
 		setCommentText(event.target.value);
 	};
 
-	const saveComment = (commentText: string, parent_comment_id: number) => {
+	const saveComment = (
+		commentText: string,
+		parent_comment_id: number | null
+	) => {
 		let newComment: AddNewCommentData = {
 			fullname: user?.fullname ?? "",
 			username: user?.username ?? "",
@@ -89,9 +108,35 @@ function AddCommentBlock({
 		};
 
 		postComment(newComment).then((res) => {
-			console.log(res);
+			if (setOpenReplyTextbox) {
+				setOpenReplyTextbox(false);
+			}
+
+			setShowCommentTextbox(false);
+			setCommentText("");
+
+			toast({
+				title: "Comment Succesfully Posted",
+				description:
+					newComment.body.length > 60
+						? newComment.body.substring(0, 60) + "..."
+						: newComment.body,
+			});
 		});
 	};
+
+	// display comment textbox
+	const [showCommentTextbox, setShowCommentTextbox] = useState<boolean>(false);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+	useEffect(() => {
+		// Focus on the textarea when showCommentTextbox becomes true
+		if (showCommentTextbox) {
+			if (textareaRef.current) {
+				textareaRef.current.focus();
+			}
+		}
+	}, [showCommentTextbox]);
 
 	return (
 		<div id="add-comment-block" className="relative flex flex-row my-5">
@@ -108,36 +153,57 @@ function AddCommentBlock({
 					<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
 						{user?.fullname}
 					</h4>
-					<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 p-1 rounded-lg bg-secondary">
+					<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
 						@{user?.username}
 					</h4>
 				</div>
-				<Textarea
-					className="border-2 mb-2"
-					placeholder="Add a comment..."
-					value={commentText}
-					onChange={handleCommentChange}
-				/>
-				<div id="comment-controls-block" className="flex flex-row justify-end">
-					{isReply && (
-						<Button
-							className="px-2 mr-2"
-							variant="secondary"
-							size="sm"
-							onClick={() => setOpenReply(false)}
+				{isReply || showCommentTextbox ? (
+					<>
+						<Textarea
+							className="border-2 mb-2"
+							placeholder="Add a comment..."
+							value={commentText}
+							onChange={handleCommentChange}
+							ref={textareaRef}
+						/>
+						<div
+							id="comment-controls-block"
+							className="flex flex-row justify-end"
 						>
-							Cancel
+							<Button
+								className="px-2 mr-2"
+								variant="secondary"
+								size="sm"
+								onClick={() =>
+									isReply
+										? setOpenReplyTextbox && setOpenReplyTextbox(false)
+										: setShowCommentTextbox(false)
+								}
+							>
+								Cancel
+							</Button>
+							<Button
+								className="px-2"
+								size="sm"
+								onClick={() => saveComment(commentText, comment_id)}
+								disabled={!commentText.replace(/\s/g, "").length}
+							>
+								Comment
+							</Button>
+						</div>
+					</>
+				) : (
+					<>
+						<Button
+							className="p-0 w-full hover:cursor-text text-start"
+							variant="ghost"
+							onClick={() => setShowCommentTextbox(true)}
+						>
+							Add a comment...
 						</Button>
-					)}
-					<Button
-						className="px-2"
-						size="sm"
-						onClick={() => saveComment(commentText, comment_id)}
-						disabled={!commentText.replace(/\s/g, "").length}
-					>
-						Comment
-					</Button>
-				</div>
+						<Separator className="my-1" />
+					</>
+				)}
 			</div>
 		</div>
 	);
@@ -146,22 +212,37 @@ function AddCommentBlock({
 interface PostedCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	initials: string;
 	video: VideoData;
+	parent_comment: CommentData | null;
 	comment: CommentData;
+	depth: number;
 }
 
 function PostedCommentBlock({
 	initials,
 	video,
+	parent_comment,
 	comment,
+	depth,
 }: PostedCommentBlockProps) {
-	// replying logic
+	// max number of recusive levels of replies for a comment
+	const maximumDepth = 3;
 
 	// display reply textbox
-	const [openReply, setOpenReply] = useState<boolean>(false);
+	const [openReplyTextbox, setOpenReplyTextbox] = useState<boolean>(false);
+	const [openReplies, setOpenReplies] = useState<boolean>(false);
+
+	// initialise comment replies
+	const [replies, setReplies] = useState<CommentData[]>([]);
+
+	useEffect(() => {
+		getCommentReplies(comment.id).then((res) => {
+			setReplies(res.data);
+		});
+	}, []);
 
 	return (
 		<div>
-			<div id="comment-block" className="relative flex flex-row my-5">
+			<div id="comment-block" className="relative flex flex-row mt-5">
 				<Avatar className="h-8 w-8 mr-2">
 					<AvatarImage
 						src="https://github.com/shadcn.png"
@@ -175,7 +256,7 @@ function PostedCommentBlock({
 						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
 							{comment.fullname}
 						</h4>
-						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 p-1 rounded-lg bg-secondary">
+						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
 							@{comment.username}
 						</h4>
 					</div>
@@ -183,6 +264,8 @@ function PostedCommentBlock({
 					<div className="comment-controls flex flex-row">
 						<Button className="p-2" variant="ghost" size="sm">
 							<ThumbsUp className="w-4" />
+							&nbsp;
+							{comment.like}
 						</Button>
 						<Button className="p-2" variant="ghost" size="sm">
 							<ThumbsDown className="w-4" />
@@ -191,7 +274,7 @@ function PostedCommentBlock({
 							className="ml-3 p-2"
 							variant="ghost"
 							size="sm"
-							onClick={() => setOpenReply(true)}
+							onClick={() => setOpenReplyTextbox(true)}
 						>
 							<CornerDownRight className="w-4" />
 							&nbsp; Reply
@@ -200,13 +283,43 @@ function PostedCommentBlock({
 				</div>
 			</div>
 			<div id="comment-replies-block" className="ml-10">
-				{openReply && (
+				{openReplyTextbox && (
 					<AddCommentBlock
 						video={video}
-						comment_id={comment.id}
-						setOpenReply={setOpenReply}
+						comment_id={
+							parent_comment && depth >= maximumDepth - 1
+								? parent_comment.id
+								: comment.id
+						}
+						setOpenReplyTextbox={setOpenReplyTextbox}
 					/>
 				)}
+				{replies.length > 0 && (
+					<Button
+						className="p-1"
+						variant="ghost"
+						onClick={() => setOpenReplies(!openReplies)}
+					>
+						{openReplies ? (
+							<ArrowUp className="w-5" color="#398FD9" />
+						) : (
+							<ArrowDown className="w-5" color="#398FD9" />
+						)}
+						&nbsp;
+						<span style={{ color: "#398fd9" }}>{replies.length} Replies</span>
+					</Button>
+				)}
+				{openReplies &&
+					replies.map((reply: CommentData) => (
+						<PostedCommentBlock
+							key={reply.id}
+							initials={"N/A"}
+							parent_comment={comment}
+							comment={reply}
+							video={video}
+							depth={depth + 1}
+						/>
+					))}
 			</div>
 		</div>
 	);

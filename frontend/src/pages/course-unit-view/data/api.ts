@@ -38,5 +38,5 @@ export function getVideoComments(video_id: number) {
 }
 
 export function getCommentReplies(comment_id: number) {
-	return axios.get(`${apiDomain}/comment/${comment_id}/replies/`);
+	return axios.get(`${apiDomain}/comments/${comment_id}/replies/`);
 }

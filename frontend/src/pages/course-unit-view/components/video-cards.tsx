@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useWeek } from "../context/week-provider";
 import { useVideo } from "../context/video-provider";
 import { useCourseUnit } from "@/pages/top-menubar/context/course-unit-provider";
+import { Dot } from "lucide-react";
 
 interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -23,7 +24,6 @@ export default function VideoCards({ className }: VideoCardsProps) {
 	const [selectedVideo, setSelectedVideo] = useState<VideoData | null>();
 
 	const week = useWeek().week;
-	const courseUnit = useCourseUnit().courseUnit;
 	const setVideo = useVideo().setVideo;
 
 	function updateSelectedVideo(video?: VideoData) {
@@ -44,6 +44,7 @@ export default function VideoCards({ className }: VideoCardsProps) {
 
 				// set default as first video
 				updateSelectedVideo(res.data[0]);
+				console.log();
 			});
 		} else {
 			setVideos([]);
@@ -78,8 +79,10 @@ export default function VideoCards({ className }: VideoCardsProps) {
 							</CardHeader>
 							<div>
 								<CardTitle className="text-lg">{video.title}</CardTitle>
-								<CardDescription>
-									{video.uploaded_at.toString()}
+								<CardDescription className="flex flex-row">
+									{new Date(video.uploaded_at).toLocaleDateString("en-GB")}
+									<Dot />
+									{new Date(video.uploaded_at).toLocaleTimeString("en-GB")}
 								</CardDescription>
 							</div>
 						</Card>

@@ -21,6 +21,7 @@ import { useState } from "react";
 
 import { VideoData } from "../data/apiTypes";
 import { useVideo } from "../context/video-provider";
+import { Dot } from "lucide-react";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -91,7 +92,14 @@ export function CourseVideoMaterialEmbed({
 			>
 				<AccordionItem value="video-description">
 					<AccordionTrigger>{video.title}</AccordionTrigger>
-					<AccordionContent>{video.description}</AccordionContent>
+					<AccordionContent>
+						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-2 flex flex-row">
+							{new Date(video.uploaded_at).toLocaleDateString("en-GB")}
+							<Dot />
+							{new Date(video.uploaded_at).toLocaleTimeString("en-GB")}
+						</h4>
+						{video.description}
+					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
 			<Comments video={video} />

@@ -7,3 +7,10 @@ export interface UserData {
 	// department?: string;
 	// studylevel?: string;
 }
+
+export enum UserRole {
+	STUDENT = 0,
+	TEACHING_ASSISTANT = 1,
+	LECTURER = 2,
+	ADMIN = 3,
+}
