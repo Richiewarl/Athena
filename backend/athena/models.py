@@ -32,6 +32,7 @@ class Video(models.Model):
 class Comment(models.Model):
     fullname = models.CharField(max_length=300)
     username = models.CharField(max_length=150)
+    # user_role = models.IntegerField()
     body = models.TextField()
     created_at = models.DateTimeField()
     active = models.BooleanField()

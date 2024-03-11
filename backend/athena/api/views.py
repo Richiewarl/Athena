@@ -37,7 +37,11 @@ class VideoViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def comments(self, request, pk=None):
         video = self.get_object()
+        
+        # filter root comments for a video
         comments = Comment.objects.filter(video_id=video)
+        comments = Comment.objects.filter(parent_comment_id=None)
+        
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     
