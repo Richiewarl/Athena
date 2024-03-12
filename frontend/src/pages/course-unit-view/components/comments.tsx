@@ -4,6 +4,13 @@ import { UserData } from "@/authentication/data/userTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { AddNewCommentData, CommentData, VideoData } from "../data/apiTypes";
 import { getCommentReplies, getVideoComments, postComment } from "../data/api";
@@ -13,6 +20,7 @@ import {
 	CornerDownRight,
 	ThumbsDown,
 	ThumbsUp,
+	MoreVerticalIcon,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -249,9 +257,16 @@ function PostedCommentBlock({
 		});
 	}, []);
 
+	// Display comment settings
+	const [showSettingButton, setShowSettingButton] = useState(false);
+	const [showCommentSettings, setShowCommentSettings] = useState(false);
+
 	return (
-		<div>
-			<div id="comment-block" className="relative flex flex-row mt-5">
+		<div
+			onMouseEnter={() => setShowSettingButton(true)}
+			onMouseLeave={() => setShowSettingButton(false)}
+		>
+			<div className="relative flex flex-row mt-5">
 				<Avatar className="h-8 w-8 mr-2">
 					<AvatarImage
 						src="https://github.com/shadcn.png"
@@ -290,6 +305,34 @@ function PostedCommentBlock({
 						</Button>
 					</div>
 				</div>
+				<DropdownMenu
+					open={showCommentSettings}
+					onOpenChange={() => {
+						setShowCommentSettings(!showCommentSettings);
+					}}
+				>
+					<DropdownMenuTrigger asChild>
+						<Button
+							className="ml-auto p-1"
+							variant="ghost"
+							style={{
+								opacity: showSettingButton || showCommentSettings ? "100" : "0",
+							}}
+							onMouseEnter={() => setShowSettingButton(true)}
+							onMouseLeave={() => setShowSettingButton(false)}
+							onFocus={() => setShowSettingButton(true)}
+							onBlur={() => setShowSettingButton(false)}
+						>
+							<MoreVerticalIcon className="w-5" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem>Edit</DropdownMenuItem>
+						<DropdownMenuItem className="text-destructive">
+							Delete
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 			<div id="comment-replies-block" className="ml-10">
 				{openReplyTextbox && (
