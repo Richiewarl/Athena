@@ -24,7 +24,7 @@ export function validateUser(searchParams: any) {
 			sendForAuthentication();
 		} else {
 			recordAuthenticatedUser(searchParams);
-			// isGETParametersMatchingServerAuthentication(searchParams);
+			isGETParametersMatchingServerAuthentication(searchParams);
 			return true;
 		}
 	} else {
@@ -65,14 +65,20 @@ function getAuthenticationURL(csticket: string, command: string) {
 function isGETParametersMatchingServerAuthentication(searchParams: any) {
 	const csticket = searchParams.get("csticket");
 	const username = searchParams.get("username");
-	const fullname = searchParams.get("fullname");
+	const fullname = encodeURIComponent(searchParams.get("fullname"));
 
 	let url = getAuthenticationURL(csticket, "confirm");
 	url += "&username=" + username + "&fullname=" + fullname;
+	url = url;
+	console.log(url);
 
-	axios.get(url).then((res) => {
-		console.log(res);
-	});
+	fetch(url, { mode: "cors" })
+		.then((res) => {
+			console.log(res);
+		})
+		.catch((error) => {
+			console.error(error);
+		});
 
 	return false;
 }
