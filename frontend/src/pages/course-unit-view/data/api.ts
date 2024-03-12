@@ -1,5 +1,10 @@
 import axios from "axios";
-import { AddNewCommentData, CommentData } from "./apiTypes";
+import {
+	AddNewCommentData,
+	CommentData,
+	NewVideoData,
+	NewWeekData,
+} from "./apiTypes";
 
 const apiDomain: string = import.meta.env.VITE_API_URL;
 
@@ -15,6 +20,10 @@ export function getCourseUnitWeeks(course_unit_id: number) {
 	return axios.get(`${apiDomain}/course_units/${course_unit_id}/weeks/`);
 }
 
+export function postWeek(data: NewWeekData) {
+	return axios.post(`${apiDomain}/weeks/`, data);
+}
+
 // video
 export function getAllVideos() {
 	return axios.get(`${apiDomain}/videos`);
@@ -28,8 +37,12 @@ export function getVideo(video_id: number) {
 	return axios.get(`${apiDomain}/videos/${video_id}/`);
 }
 
+export function postVideo(data: NewVideoData) {
+	return axios.post(`${apiDomain}/videos/`, data);
+}
+
 // comments
-export async function postComment(data: CommentData | AddNewCommentData) {
+export async function postComment(data: AddNewCommentData) {
 	return axios.post(`${apiDomain}/comments/`, data);
 }
 

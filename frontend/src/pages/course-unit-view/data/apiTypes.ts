@@ -3,8 +3,10 @@
 export interface WeekData {
 	id: number;
 	title: string;
-	course_unit_id: string;
+	course_unit_id: number;
 }
+
+export type NewWeekData = Omit<WeekData, "id">;
 
 export interface VideoData {
 	id: number;
@@ -15,6 +17,8 @@ export interface VideoData {
 	thumbnail: string;
 	week_id: number;
 }
+
+export type NewVideoData = Omit<VideoData, "id">;
 
 export interface CommentData {
 	id: number;

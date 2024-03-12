@@ -58,6 +58,7 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	setOpenReplyTextbox: Function | null;
 }
 
+// Acts as input for either adding reply (comment of a comment) or comment (root comment)
 function AddCommentBlock({
 	video,
 	comment_id,
@@ -107,22 +108,30 @@ function AddCommentBlock({
 			parent_comment_id: parent_comment_id,
 		};
 
-		postComment(newComment).then((res) => {
-			if (setOpenReplyTextbox) {
-				setOpenReplyTextbox(false);
-			}
+		postComment(newComment)
+			.then((res) => {
+				if (setOpenReplyTextbox) {
+					setOpenReplyTextbox(false); // close reply textbox
+				}
 
-			setShowCommentTextbox(false);
-			setCommentText("");
+				setShowCommentTextbox(false); // hide comment textbox
+				setCommentText(""); // reset input text
 
-			toast({
-				title: "Comment Succesfully Posted",
-				description:
-					newComment.body.length > 60
-						? newComment.body.substring(0, 60) + "..."
-						: newComment.body,
+				toast({
+					title: "Comment Succesfully Posted",
+					description:
+						newComment.body.length > 60
+							? newComment.body.substring(0, 60) + "..."
+							: newComment.body,
+				});
+			})
+			.catch((error) => {
+				toast({
+					title: "Uh oh! Something went wrong.",
+					description: error.message + ". We could not add your comment.",
+					variant: "destructive",
+				});
 			});
-		});
 	};
 
 	// display comment textbox

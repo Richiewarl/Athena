@@ -4,3 +4,5 @@ export interface CourseUnitData {
 	title: string;
 	description: string;
 }
+
+export type NewCourseUnitData = Omit<CourseUnitData, "id">;

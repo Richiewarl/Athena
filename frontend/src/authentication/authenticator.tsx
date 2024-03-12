@@ -24,7 +24,7 @@ export function validateUser(searchParams: any) {
 			sendForAuthentication();
 		} else {
 			recordAuthenticatedUser(searchParams);
-			isGETParametersMatchingServerAuthentication(searchParams);
+			// isGETParametersMatchingServerAuthentication(searchParams);
 			return true;
 		}
 	} else {
