@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { isGETParametersMatchingServerAuthentication } from "./authenticator";
-import { homepage, logInPage } from "../data/paths";
+import { paths } from "@/enums/paths";
 
 // If not logged in, go to login page, regardless of location
 export default function AuthController() {
@@ -30,10 +30,10 @@ export default function AuthController() {
 		}
 
 		// only redirect when not already on the page
-		if (!loggedIn && location !== logInPage) {
-			navigate(logInPage);
-		} else if (loggedIn && location !== homepage) {
-			navigate(homepage);
+		if (!loggedIn && location !== paths.LoginPage) {
+			navigate(paths.LoginPage);
+		} else if (loggedIn && location !== paths.Homepage) {
+			navigate(paths.Homepage);
 		}
 	}, []);
 

@@ -10,17 +10,21 @@ import UoMAuth from "./authentication/components/authenticator";
 
 // Context Providers
 import { ThemeProvider } from "./components/theme-control/theme-provider";
-
-import { homepage, logInPage, uomAuth } from "./authentication/data/paths";
+import SettingsProfilePage from "./pages/profile-settings/page";
+import { paths } from "./enums/paths";
 
 function App() {
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
 			<BrowserRouter>
 				<Routes>
-					<Route path={logInPage} element={<AuthenticationPage />} />
-					<Route path={uomAuth} element={<UoMAuth />} />
-					<Route path={homepage} element={<Homepage />} />
+					<Route path={paths.LoginPage} element={<AuthenticationPage />} />
+					<Route path={paths.UoMAuth} element={<UoMAuth />} />
+					<Route
+						path={paths.ProfileSettings}
+						element={<SettingsProfilePage />}
+					/>
+					<Route path={paths.Homepage} element={<Homepage />} />
 				</Routes>
 			</BrowserRouter>
 		</ThemeProvider>
