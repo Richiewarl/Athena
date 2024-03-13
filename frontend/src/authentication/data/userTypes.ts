@@ -1,4 +1,4 @@
-export interface UserData {
+export interface UserSessionData {
 	csticket?: string;
 	timestamp?: number;
 	username?: string;

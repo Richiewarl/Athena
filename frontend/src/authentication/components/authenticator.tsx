@@ -1,19 +1,21 @@
 import uniqid from "uniqid";
-import { UserData } from "./data/userTypes";
 import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { UserSessionData } from "../data/userTypes";
 
-const DEVELOPER_URL = "http://localhost:5173/homepage";
+const domain: string = import.meta.env.VITE_WEB_DOMAIN;
+
+const DEVELOPER_URL = domain + "/homepage";
 const AUTHENTICATION_SERVICE_URL =
 	"http://studentnet.cs.manchester.ac.uk/authenticate/";
 const AUTHENTICATION_LOGOUT_URL =
 	"http://studentnet.cs.manchester.ac.uk/systemlogout.php";
 
-export function validateUser(searchParams: any) {
+const validateUser = (searchParams: any) => {
 	const userJson = localStorage.getItem("user-data");
-	let user: UserData;
+	let user: UserSessionData;
+	const production_env: boolean = import.meta.env.MODE === "production";
 
 	if (userJson) {
 		user = JSON.parse(userJson);
@@ -23,22 +25,33 @@ export function validateUser(searchParams: any) {
 		} else if (user.csticket != searchParams.get("csticket")) {
 			sendForAuthentication();
 		} else {
-			recordAuthenticatedUser(searchParams);
-			isGETParametersMatchingServerAuthentication(searchParams);
-			return true;
+			if (production_env) {
+				// !TBD! : THIS SHOULD ONLY USE isGETParametersMatchingServerAuthentication FOR AUTH VERIFICATION
+				// localhost is not valid for the UoM servers so we have to ignore that for now and relax auth during dev
+				if (isGETParametersMatchingServerAuthentication(searchParams)) {
+					recordAuthenticatedUser(searchParams);
+					return true;
+				} else {
+					invalidateUser();
+					return false;
+				}
+			} else {
+				recordAuthenticatedUser(searchParams);
+				return true;
+			}
 		}
 	} else {
 		sendForAuthentication();
 	}
 
 	return false;
-}
+};
 
-function sendForAuthentication() {
+const sendForAuthentication = () => {
 	const csticket = uniqid();
 	let url = getAuthenticationURL(csticket, "validate");
 
-	let user: UserData = {
+	let user: UserSessionData = {
 		csticket: csticket,
 		timestamp: undefined,
 		username: undefined,
@@ -48,9 +61,9 @@ function sendForAuthentication() {
 	localStorage.setItem("user-data", JSON.stringify(user));
 
 	window.location.href = url;
-}
+};
 
-function getAuthenticationURL(csticket: string, command: string) {
+const getAuthenticationURL = (csticket: string, command: string) => {
 	return (
 		AUTHENTICATION_SERVICE_URL +
 		"?url=" +
@@ -60,9 +73,11 @@ function getAuthenticationURL(csticket: string, command: string) {
 		"&version=3&command=" +
 		command
 	);
-}
+};
 
-function isGETParametersMatchingServerAuthentication(searchParams: any) {
+export const isGETParametersMatchingServerAuthentication = (
+	searchParams: any
+) => {
 	const csticket = searchParams.get("csticket");
 	const username = searchParams.get("username");
 	const fullname = encodeURIComponent(searchParams.get("fullname"));
@@ -81,10 +96,10 @@ function isGETParametersMatchingServerAuthentication(searchParams: any) {
 		});
 
 	return false;
-}
+};
 
-export function recordAuthenticatedUser(searchParams: any) {
-	let user: UserData = {
+const recordAuthenticatedUser = (searchParams: any) => {
+	let user: UserSessionData = {
 		csticket: searchParams.get("csticket"),
 		timestamp: new Date().getTime() / 1000, // convert from ms to s
 		username: searchParams.get("username"),
@@ -92,18 +107,20 @@ export function recordAuthenticatedUser(searchParams: any) {
 	};
 
 	localStorage.setItem("user-data", JSON.stringify(user));
-}
+
+	return true;
+};
 
 export function invalidateUser() {
 	localStorage.clear();
 	window.location.href = AUTHENTICATION_LOGOUT_URL;
 }
 
-export default function Auth() {
+// THIS REDIRECTS TO UoM CAS AUTH SERVICE
+export default function UoMAuth() {
 	const [searchParams] = useSearchParams();
 
 	useEffect(() => {
-		// localStorage.clear();
 		validateUser(searchParams);
 	}, []);
 

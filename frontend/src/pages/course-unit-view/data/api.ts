@@ -1,12 +1,7 @@
 import axios from "axios";
-import {
-	AddNewCommentData,
-	CommentData,
-	NewVideoData,
-	NewWeekData,
-} from "./apiTypes";
+import { AddNewCommentData, NewVideoData, NewWeekData } from "./apiTypes";
 
-const apiDomain: string = import.meta.env.VITE_API_URL;
+const apiDomain: string = import.meta.env.VITE_API_DOMAIN;
 
 // api calls to Django endpoints
 // END URLs WITH SLASH, DJANGO PROJECT ENFORCES IT

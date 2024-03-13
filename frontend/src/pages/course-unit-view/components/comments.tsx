@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { UserData } from "@/authentication/data/userTypes";
+import { UserSessionData } from "@/authentication/data/userTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,7 @@ import {
 	ThumbsDown,
 	ThumbsUp,
 	MoreVerticalIcon,
+	Dot,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -37,7 +38,7 @@ export default function Comments({ video }: CommentProps) {
 		getVideoComments(video.id).then((res) => {
 			setComments(res.data);
 		});
-	}, []);
+	}, [video.id]);
 
 	return (
 		<div id="comment-section" className="">
@@ -45,6 +46,10 @@ export default function Comments({ video }: CommentProps) {
 				video={video}
 				comment_id={null}
 				setOpenReplyTextbox={null}
+				setComments={setComments}
+				comments={comments}
+				setReplies={null}
+				replies={[]}
 			/>
 			{comments.map((comment: CommentData) => (
 				<PostedCommentBlock
@@ -64,6 +69,10 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
 	comment_id: number | null;
 	setOpenReplyTextbox: Function | null;
+	setComments: Function | null;
+	comments: CommentData[];
+	setReplies: Function | null;
+	replies: CommentData[];
 }
 
 // Acts as input for either adding reply (comment of a comment) or comment (root comment)
@@ -71,12 +80,16 @@ function AddCommentBlock({
 	video,
 	comment_id,
 	setOpenReplyTextbox,
+	setComments,
+	comments,
+	setReplies,
+	replies,
 }: AddCommentBlockProps) {
 	const isReply: boolean = Boolean(comment_id && setOpenReplyTextbox);
 
 	// initialise user details
 	const userJson = localStorage.getItem("user-data");
-	let user: UserData | null = null;
+	let user: UserSessionData | null = null;
 	let initials = "N/A";
 
 	if (userJson) {
@@ -118,12 +131,16 @@ function AddCommentBlock({
 
 		postComment(newComment)
 			.then((res) => {
-				if (setOpenReplyTextbox) {
-					setOpenReplyTextbox(false); // close reply textbox
+				if (isReply) {
+					setOpenReplyTextbox && setOpenReplyTextbox(false); // close reply textbox
+					setReplies && setReplies([res.data, ...replies]);
+				} else {
+					setShowCommentTextbox(false); // hide comment textbox
+					setComments && setComments([res.data, ...comments]);
 				}
 
-				setShowCommentTextbox(false); // hide comment textbox
-				setCommentText(""); // reset input text
+				// reset input text
+				setCommentText("");
 
 				toast({
 					title: "Comment Succesfully Posted",
@@ -276,13 +293,18 @@ function PostedCommentBlock({
 					<AvatarFallback>{initials}</AvatarFallback>
 				</Avatar>
 				<div className="w-full">
-					<div className="flex flex-row">
+					<div className="flex flex-row items-center">
 						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
 							{comment.fullname}
 						</h4>
 						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
 							@{comment.username}
 						</h4>
+						<p className="flex flex-row items-center text-xs mb-1 py-1 px-2 text-muted-foreground">
+							{new Date(comment.created_at).toLocaleDateString("en-GB")}
+							<Dot className="w-4" />
+							{new Date(comment.created_at).toLocaleTimeString("en-GB")}
+						</p>
 					</div>
 					<p className="mb-2">{comment.body}</p>
 					<div className="comment-controls flex flex-row">
@@ -344,6 +366,10 @@ function PostedCommentBlock({
 								: comment.id
 						}
 						setOpenReplyTextbox={setOpenReplyTextbox}
+						setComments={null}
+						comments={[]}
+						setReplies={setReplies}
+						replies={replies}
 					/>
 				)}
 				{replies.length > 0 && (

@@ -46,7 +46,9 @@ export default function WeeklyContent({ className }: WeeklyContentProps) {
 							</Button>
 						</DialogTrigger>
 						<DialogContent>
-							<DialogHeader>{week?.title}</DialogHeader>
+							<DialogHeader>
+								<DialogTitle>{week?.title}</DialogTitle>
+							</DialogHeader>
 							<DialogDescription>
 								This should be a description for this week's content...
 							</DialogDescription>

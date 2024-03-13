@@ -1,7 +1,7 @@
 import axios from "axios";
 import { NewCourseUnitData } from "./apiTypes";
 
-const apiDomain: string = import.meta.env.VITE_API_URL;
+const apiDomain: string = import.meta.env.VITE_API_DOMAIN;
 
 // course unit
 export function getAllCourseUnits() {

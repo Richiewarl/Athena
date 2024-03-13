@@ -5,16 +5,25 @@ import "./App.css";
 
 // Page components
 import Homepage from "./pages/page";
-import Auth from "./authentication/authenticator";
+import AuthenticationPage from "./authentication/page";
+import UoMAuth from "./authentication/components/authenticator";
+
+// Context Providers
+import { ThemeProvider } from "./components/theme-control/theme-provider";
+
+import { homepage, logInPage, uomAuth } from "./authentication/data/paths";
 
 function App() {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Auth />} />
-				<Route path="/homepage" element={<Homepage />} />
-			</Routes>
-		</BrowserRouter>
+		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+			<BrowserRouter>
+				<Routes>
+					<Route path={logInPage} element={<AuthenticationPage />} />
+					<Route path={uomAuth} element={<UoMAuth />} />
+					<Route path={homepage} element={<Homepage />} />
+				</Routes>
+			</BrowserRouter>
+		</ThemeProvider>
 	);
 }
 

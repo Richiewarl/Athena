@@ -9,12 +9,12 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { invalidateUser } from "@/authentication/authenticator";
-import { UserData } from "@/authentication/data/userTypes";
+import { invalidateUser } from "@/authentication/components/authenticator";
+import { UserSessionData } from "@/authentication/data/userTypes";
 
 export default function UserNav() {
 	const userJson = localStorage.getItem("user-data");
-	let user: UserData | null = null;
+	let user: UserSessionData | null = null;
 	let initials = "N/A";
 
 	if (userJson) {
