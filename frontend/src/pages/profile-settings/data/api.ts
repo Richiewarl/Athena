@@ -4,5 +4,5 @@ import { NewUserProfileData } from "@/authentication/data/userTypes";
 const apiDomain: string = import.meta.env.VITE_API_DOMAIN;
 
 export function updateUserProfile(data: NewUserProfileData) {
-	return axios.put(`${apiDomain}/users/`, data);
+	return axios.put(`${apiDomain}/users/update`, data);
 }

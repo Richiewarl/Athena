@@ -23,17 +23,30 @@ import { paths } from "@/enums/paths";
 import { UserRoleCardSelect } from "./user-role-cards";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useUser } from "@/authentication/context/user-provider";
 import { createNewUser, getUserByUsername } from "@/authentication/data/api";
-import { invalidateUser } from "@/authentication/components/authenticator";
 import { updateUserProfile } from "../data/api";
+import { useEffect } from "react";
+import { getUserSessionData } from "@/authentication/data/utils";
 
 export default function ProfileForm() {
 	const navigate = useNavigate();
 	const { toast } = useToast();
-	const { user, setUser } = useUser();
 
-	console.log(user);
+	const userSessionData: UserSessionData = getUserSessionData();
+	let user: UserProfileData | null = null;
+
+	useEffect(() => {
+		getUserByUsername(userSessionData.username ?? "")
+			.then((res) => {
+				user = res.data;
+
+				form.setValue("profile_picture", res.data.profile_picture);
+				form.setValue("user_role", res.data.user_role.toString());
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}, []);
 
 	// 1. Define form schema
 	const formSchema = z.object({
@@ -47,8 +60,8 @@ export default function ProfileForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			fullname: user?.fullname,
-			username: user?.username,
+			fullname: userSessionData.fullname,
+			username: userSessionData.username,
 			profile_picture: "",
 			user_role: "0",
 		},
@@ -63,54 +76,45 @@ export default function ProfileForm() {
 		};
 
 		// if user does not exists in DB
-		getUserByUsername(user?.username ?? "")
-			.then((res) => {
-				updateUserProfile(newUser)
-					.then((res) => {
-						setUser(res.data);
-						toast({
-							description: "Profile Succesfully Saved.",
-						});
-						navigate(paths.Homepage);
-					})
-					.catch((error) => {
-						toast({
-							title: "Uh oh! Something went wrong.",
-							description:
-								error.message +
-								". There was a problem creating your initial profile settings.",
-							variant: "destructive",
-						});
+		if (!user) {
+			createNewUser(newUser)
+				.then((res) => {
+					toast({
+						description: "Profile Succesfully Saved.",
 					});
-			})
-			.catch((error) => {
-				const status = error.response.status;
-
-				if (status == 404) {
-					createNewUser(newUser)
-						.then((res) => {
-							setUser(res.data);
-							toast({
-								description: "Profile Succesfully Saved.",
-							});
-							navigate(paths.Homepage);
-						})
-						.catch((error) => {
-							toast({
-								title: "Uh oh! Something went wrong.",
-								description:
-									error.message +
-									". There was a problem creating your initial profile settings.",
-								variant: "destructive",
-							});
-						});
-				}
-			});
+					navigate(paths.Homepage);
+				})
+				.catch((error) => {
+					toast({
+						title: "Uh oh! Something went wrong.",
+						description:
+							error.message +
+							". There was a problem creating your initial profile settings.",
+						variant: "destructive",
+					});
+				});
+		} else {
+			updateUserProfile(newUser)
+				.then((res) => {
+					toast({
+						description: "Profile Succesfully Saved.",
+					});
+					navigate(paths.Homepage);
+				})
+				.catch((error) => {
+					toast({
+						title: "Uh oh! Something went wrong.",
+						description:
+							error.message +
+							". There was a problem creating your initial profile settings.",
+						variant: "destructive",
+					});
+				});
+		}
 	};
 
 	const handleCancel = () => {
-		if (!user || (user && user.id == -1)) {
-			invalidateUser(setUser);
+		if (!user) {
 			navigate(paths.LoginPage);
 		} else {
 			navigate(paths.Homepage);
@@ -133,7 +137,7 @@ export default function ProfileForm() {
 									id="user-settings-fullname-input"
 									placeholder={"John Doe"}
 									{...field}
-									disabled={user?.external_auth}
+									disabled={userSessionData.external_auth}
 								/>
 							</FormControl>
 							<FormDescription>
@@ -156,7 +160,7 @@ export default function ProfileForm() {
 									id="user-settings-username-input"
 									placeholder={"johndoe2001"}
 									{...field}
-									disabled={user?.external_auth}
+									disabled={userSessionData.external_auth}
 								/>
 							</FormControl>
 							<FormDescription>

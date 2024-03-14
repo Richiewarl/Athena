@@ -11,23 +11,38 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { invalidateUser } from "@/authentication/components/authenticator";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { paths } from "@/enums/paths";
 
 import { LogOut, Settings } from "lucide-react";
-import { useUser } from "@/authentication/context/user-provider";
+import {
+	geUsertInitials,
+	getUserSessionData,
+} from "@/authentication/data/utils";
+import { useEffect, useState } from "react";
+import { getUserByUsername } from "@/authentication/data/api";
+import {
+	UserProfileData,
+	UserSessionData,
+} from "@/authentication/data/userTypes";
+
+import default_pfp from "../../../../public/default_pfp.svg";
 
 export default function UserNav() {
 	const navigate = useNavigate();
-	const { user, setUser } = useUser();
-	let initials = "N/A";
+	const initials = geUsertInitials();
+	const userSessionData: UserSessionData = getUserSessionData();
+	const [user, setUser] = useState<UserProfileData | null>(null);
 
-	if (user && user.fullname) {
-		initials = user.fullname
-			.split(" ")
-			.map((name) => name[0].toUpperCase())
-			.join();
-	}
+	useEffect(() => {
+		getUserByUsername(userSessionData.username ?? "")
+			.then((res) => {
+				setUser(res.data);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	}, []);
 
 	return (
 		<DropdownMenu>
@@ -35,7 +50,13 @@ export default function UserNav() {
 				<Button variant="ghost" className="relative h-8 w-8 rounded-full">
 					<Avatar className="h-8 w-8">
 						<AvatarImage
-							src="https://github.com/shadcn.png"
+							src={
+								user
+									? user.profile_picture == ""
+										? default_pfp
+										: user.profile_picture
+									: default_pfp
+							}
 							alt="profile picture"
 						/>
 						<AvatarFallback>{initials}</AvatarFallback>
@@ -60,7 +81,7 @@ export default function UserNav() {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="bg-destructive text-destructive-foreground"
-					onClick={() => invalidateUser(setUser)}
+					onClick={() => invalidateUser()}
 				>
 					<LogOut className="w-5 mr-2" />
 					Log Out
