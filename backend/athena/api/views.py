@@ -1,9 +1,24 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-from rest_framework import pagination, generics
-from ..models import CourseUnit, Week, Video, Comment
-from .serializers import CourseUnitSerializer, WeekSerializer, VideoSerializer, CommentSerializer
+from rest_framework import status
+from ..models import *
+from .serializers import *
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    
+    @action(detail=False, methods=['get'])
+    def by_username(self, request):
+        username = request.query_params.get('username')
+        user = self.queryset.filter(username=username).first()
+        
+        if (user):
+            serializer = UserSerializer(user, many=False)
+            return Response(serializer.data)
+        else :
+            return Response({"detail" : "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class CourseUnitViewSet(ModelViewSet):
     queryset = CourseUnit.objects.all()
@@ -12,7 +27,7 @@ class CourseUnitViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def weeks(self, request, pk=None):
         course_unit = self.get_object()
-        weeks = Week.objects.filter(course_unit_id=course_unit)
+        weeks = Week.objects.filter(course_unit=course_unit)
         serializer = WeekSerializer(weeks, many=True)
         return Response(serializer.data)
     
@@ -23,24 +38,21 @@ class WeekViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def videos(self, request, pk=None):
         week = self.get_object()
-        videos = Video.objects.filter(week_id=week)
+        videos = Video.objects.filter(week=week)
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
     
-class VideoCommentPagination(pagination.PageNumberPagination):
-    page_size = 10  
 class VideoViewSet(ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    pagination_class = VideoCommentPagination
 
     @action(detail=True, methods=['get'])
     def comments(self, request, pk=None):
         video = self.get_object()
-        
+        print(video)
         # filter root comments for a video
-        comments = Comment.objects.filter(video_id=video)
-        comments = Comment.objects.filter(parent_comment_id=None)
+        comments = Comment.objects.filter(video=video)
+        comments = comments.filter(parent_comment_id=None)
         
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
@@ -52,7 +64,7 @@ class CommentViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def replies(self, request, pk=None):
         comment = self.get_object()
-        replies = Comment.objects.filter(parent_comment_id=comment)
+        replies = Comment.objects.filter(parent_comment=comment)
         serializer = CommentSerializer(replies, many=True)
         return Response(serializer.data)
-    
+        
