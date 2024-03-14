@@ -1,0 +1,49 @@
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+import {
+	PiChalkboardTeacherFill,
+	PiStudentFill,
+	PiPersonFill,
+} from "react-icons/pi";
+
+export function UserRoleCardSelect() {
+	return (
+		<RadioGroup defaultValue="student" className="grid grid-cols-3 gap-4">
+			<div>
+				<RadioGroupItem value="0" id="student" className="peer sr-only" />
+				<Label
+					htmlFor="student"
+					className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+				>
+					<PiPersonFill className="mb-2" size={30} />
+					Student
+				</Label>
+			</div>
+			<div>
+				<RadioGroupItem
+					value="1"
+					id="teaching-assistant"
+					className="peer sr-only"
+				/>
+				<Label
+					htmlFor="teaching-assistant"
+					className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+				>
+					<PiStudentFill className="mb-2" size={30} />
+					Teaching Assistant
+				</Label>
+			</div>
+			<div>
+				<RadioGroupItem value="2" id="lecturer" className="peer sr-only" />
+				<Label
+					htmlFor="lecturer"
+					className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+				>
+					<PiChalkboardTeacherFill className="mb-2" size={30} />
+					Lecturer
+				</Label>
+			</div>
+		</RadioGroup>
+	);
+}

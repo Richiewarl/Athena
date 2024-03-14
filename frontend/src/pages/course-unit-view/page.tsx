@@ -12,6 +12,7 @@ import { WeekDataProvider } from "./context/week-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export default function ContentPage() {
+	console.log(localStorage.getItem("user-data"));
 	return (
 		<div className="block border-b">
 			<div className="bg-background">
