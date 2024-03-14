@@ -25,20 +25,20 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { createNewUser, getUserByUsername } from "@/authentication/data/api";
 import { updateUserProfile } from "../data/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserSessionData } from "@/authentication/data/utils";
 
 export default function ProfileForm() {
 	const navigate = useNavigate();
 	const { toast } = useToast();
+	const [user, setUser] = useState<UserProfileData | null>(null);
 
 	const userSessionData: UserSessionData = getUserSessionData();
-	let user: UserProfileData | null = null;
 
 	useEffect(() => {
 		getUserByUsername(userSessionData.username ?? "")
 			.then((res) => {
-				user = res.data;
+				setUser(res.data);
 
 				form.setValue("profile_picture", res.data.profile_picture);
 				form.setValue("user_role", res.data.user_role.toString());
@@ -60,8 +60,8 @@ export default function ProfileForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			fullname: userSessionData.fullname,
-			username: userSessionData.username,
+			fullname: user ? user.fullname : userSessionData.fullname,
+			username: user ? user.username : userSessionData.username,
 			profile_picture: "",
 			user_role: "0",
 		},
@@ -94,7 +94,7 @@ export default function ProfileForm() {
 					});
 				});
 		} else {
-			updateUserProfile(newUser)
+			updateUserProfile(user.id, newUser)
 				.then((res) => {
 					toast({
 						description: "Profile Succesfully Saved.",
@@ -106,7 +106,7 @@ export default function ProfileForm() {
 						title: "Uh oh! Something went wrong.",
 						description:
 							error.message +
-							". There was a problem creating your initial profile settings.",
+							". There was a problem updating your profile settings.",
 						variant: "destructive",
 					});
 				});
@@ -137,7 +137,9 @@ export default function ProfileForm() {
 									id="user-settings-fullname-input"
 									placeholder={"John Doe"}
 									{...field}
-									disabled={userSessionData.external_auth}
+									disabled={
+										user ? user.external_auth : userSessionData.external_auth
+									}
 								/>
 							</FormControl>
 							<FormDescription>
@@ -160,7 +162,9 @@ export default function ProfileForm() {
 									id="user-settings-username-input"
 									placeholder={"johndoe2001"}
 									{...field}
-									disabled={userSessionData.external_auth}
+									disabled={
+										user ? user.external_auth : userSessionData.external_auth
+									}
 								/>
 							</FormControl>
 							<FormDescription>
@@ -202,7 +206,7 @@ export default function ProfileForm() {
 								User Role
 							</FormLabel>
 							<FormControl>
-								<UserRoleCardSelect {...field} />
+								<UserRoleCardSelect {...field} user={user} />
 							</FormControl>
 							<FormDescription>
 								Your role within our community. Select the option that best

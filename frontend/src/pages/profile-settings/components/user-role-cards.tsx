@@ -1,3 +1,4 @@
+import { UserProfileData } from "@/authentication/data/userTypes";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React from "react";
@@ -10,12 +11,16 @@ import {
 } from "react-icons/pi";
 
 interface UserRoleCardSelectProps
-	extends React.InputHTMLAttributes<HTMLInputElement> {}
+	extends React.InputHTMLAttributes<HTMLInputElement> {
+	user: UserProfileData | null;
+}
 
 export const UserRoleCardSelect = React.forwardRef<
 	HTMLInputElement,
 	UserRoleCardSelectProps
 >(({ ...props }, ref) => {
+	const user: UserProfileData | null = props.user;
+
 	const handleChange = (x: any) => {
 		if (props.onChange) {
 			props.onChange(x);
@@ -26,7 +31,7 @@ export const UserRoleCardSelect = React.forwardRef<
 
 	return (
 		<RadioGroup
-			defaultValue="0"
+			defaultValue={user ? user.user_role.toString() : "0"}
 			id="user-role-input"
 			className="grid grid-cols-3 gap-4"
 			onValueChange={handleChange}
