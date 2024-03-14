@@ -1,5 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import React from "react";
+import { useState } from "react";
 
 import {
 	PiChalkboardTeacherFill,
@@ -7,9 +9,30 @@ import {
 	PiPersonFill,
 } from "react-icons/pi";
 
-export function UserRoleCardSelect() {
+interface UserRoleCardSelectProps
+	extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+export const UserRoleCardSelect = React.forwardRef<
+	HTMLInputElement,
+	UserRoleCardSelectProps
+>(({ ...props }, ref) => {
+	const handleChange = (x: any) => {
+		if (props.onChange) {
+			props.onChange(x);
+		} else {
+			console.error("onChange() for user_role radio buttons missing.");
+		}
+	};
+
 	return (
-		<RadioGroup defaultValue="student" className="grid grid-cols-3 gap-4">
+		<RadioGroup
+			defaultValue="0"
+			id="user-role-input"
+			className="grid grid-cols-3 gap-4"
+			onValueChange={handleChange}
+			value={props.value?.toString()}
+			ref={ref}
+		>
 			<div>
 				<RadioGroupItem value="0" id="student" className="peer sr-only" />
 				<Label
@@ -46,4 +69,4 @@ export function UserRoleCardSelect() {
 			</div>
 		</RadioGroup>
 	);
-}
+});

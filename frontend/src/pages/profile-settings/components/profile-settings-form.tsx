@@ -13,62 +13,108 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { UserSessionData } from "@/authentication/data/userTypes";
+import {
+	NewUserProfileData,
+	UserProfileData,
+	UserSessionData,
+} from "@/authentication/data/userTypes";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/enums/paths";
 import { UserRoleCardSelect } from "./user-role-cards";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { useUser } from "@/authentication/context/user-provider";
+import { createNewUser, getUserByUsername } from "@/authentication/data/api";
+import { invalidateUser } from "@/authentication/components/authenticator";
+import { updateUserProfile } from "../data/api";
 
 export default function ProfileForm() {
 	const navigate = useNavigate();
 	const { toast } = useToast();
+	const { user, setUser } = useUser();
 
-	const userJson = localStorage.getItem("user-data");
-	let user: UserSessionData | null = null;
-
-	if (userJson) {
-		user = JSON.parse(userJson);
-	} else {
-		navigate(paths.LoginPage);
-	}
+	console.log(user);
 
 	// 1. Define form schema
 	const formSchema = z.object({
 		fullname: z.string().min(1).max(300),
 		username: z.string().min(1).max(150),
 		profile_picture: z.string(),
-		user_role: z.number().min(0).max(3),
+		user_role: z.string(),
 	});
 
 	// 2. Define your form.
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			fullname: user?.fullname ? user?.fullname : "",
-			username: user?.username ? user?.fullname : "",
+			fullname: user?.fullname,
+			username: user?.username,
 			profile_picture: "",
-			user_role: 0,
+			user_role: "0",
 		},
 	});
 
 	// 3. Define a submit handler.
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
-		console.log(values);
-		// postCourseUnit(values)
-		// 	.then((res) => {
-		// 		toast({
-		// 			title: "Course Unit Succesfully Added",
-		// 			description: `${values.course_code}: ${values.title}`,
-		// 		});
-		// 	})
-		// 	.catch((error) => {
-		// 		toast({
-		// 			title: "Uh oh! Something went wrong.",
-		// 			description: error.message + ". We could not add your course unit.",
-		// 			variant: "destructive",
-		// 		});
-		// 	});
+		const newUser: NewUserProfileData = {
+			...values,
+			user_role: Number(values.user_role),
+			external_auth: user?.external_auth ?? false,
+		};
+
+		// if user does not exists in DB
+		getUserByUsername(user?.username ?? "")
+			.then((res) => {
+				updateUserProfile(newUser)
+					.then((res) => {
+						setUser(res.data);
+						toast({
+							description: "Profile Succesfully Saved.",
+						});
+						navigate(paths.Homepage);
+					})
+					.catch((error) => {
+						toast({
+							title: "Uh oh! Something went wrong.",
+							description:
+								error.message +
+								". There was a problem creating your initial profile settings.",
+							variant: "destructive",
+						});
+					});
+			})
+			.catch((error) => {
+				const status = error.response.status;
+
+				if (status == 404) {
+					createNewUser(newUser)
+						.then((res) => {
+							setUser(res.data);
+							toast({
+								description: "Profile Succesfully Saved.",
+							});
+							navigate(paths.Homepage);
+						})
+						.catch((error) => {
+							toast({
+								title: "Uh oh! Something went wrong.",
+								description:
+									error.message +
+									". There was a problem creating your initial profile settings.",
+								variant: "destructive",
+							});
+						});
+				}
+			});
+	};
+
+	const handleCancel = () => {
+		if (!user || (user && user.id == -1)) {
+			invalidateUser(setUser);
+			navigate(paths.LoginPage);
+		} else {
+			navigate(paths.Homepage);
+		}
 	};
 
 	return (
@@ -87,7 +133,7 @@ export default function ProfileForm() {
 									id="user-settings-fullname-input"
 									placeholder={"John Doe"}
 									{...field}
-									disabled={user?.CASAuth}
+									disabled={user?.external_auth}
 								/>
 							</FormControl>
 							<FormDescription>
@@ -110,7 +156,7 @@ export default function ProfileForm() {
 									id="user-settings-username-input"
 									placeholder={"johndoe2001"}
 									{...field}
-									disabled={user?.CASAuth}
+									disabled={user?.external_auth}
 								/>
 							</FormControl>
 							<FormDescription>
@@ -152,7 +198,7 @@ export default function ProfileForm() {
 								User Role
 							</FormLabel>
 							<FormControl>
-								<UserRoleCardSelect />
+								<UserRoleCardSelect {...field} />
 							</FormControl>
 							<FormDescription>
 								Your role within our community. Select the option that best
@@ -164,7 +210,7 @@ export default function ProfileForm() {
 				/>
 				<div className="flex flex-row">
 					<div className="space-x-2 ml-auto">
-						<Button variant="outline" onClick={() => navigate(paths.Homepage)}>
+						<Button variant="outline" onClick={handleCancel}>
 							Cancel
 						</Button>
 						<Button type="submit">Continue</Button>

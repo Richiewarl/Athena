@@ -12,21 +12,27 @@ import UoMAuth from "./authentication/components/authenticator";
 import { ThemeProvider } from "./components/theme-control/theme-provider";
 import SettingsProfilePage from "./pages/profile-settings/page";
 import { paths } from "./enums/paths";
+import { UserDataProvider } from "./authentication/context/user-provider";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-			<BrowserRouter>
-				<Routes>
-					<Route path={paths.LoginPage} element={<AuthenticationPage />} />
-					<Route path={paths.UoMAuth} element={<UoMAuth />} />
-					<Route
-						path={paths.ProfileSettings}
-						element={<SettingsProfilePage />}
-					/>
-					<Route path={paths.Homepage} element={<Homepage />} />
-				</Routes>
-			</BrowserRouter>
+			<UserDataProvider>
+				<BrowserRouter>
+					<Routes>
+						<Route path={paths.LoginPage} element={<AuthenticationPage />} />
+						<Route path={paths.UoMAuth} element={<UoMAuth />} />
+
+						<Route
+							path={paths.ProfileSettings}
+							element={<SettingsProfilePage />}
+						/>
+						<Route path={paths.Homepage} element={<Homepage />} />
+					</Routes>
+				</BrowserRouter>
+				<Toaster />
+			</UserDataProvider>
 		</ThemeProvider>
 	);
 }

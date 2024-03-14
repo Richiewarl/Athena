@@ -57,7 +57,6 @@ export default function VideoCards({ className }: VideoCardsProps) {
 		} else {
 			setVideo(null);
 			setSelectedVideo(null);
-			console.log("No videos for this week!");
 		}
 	}
 
@@ -68,7 +67,6 @@ export default function VideoCards({ className }: VideoCardsProps) {
 
 				// set default as first video
 				updateSelectedVideo(res.data[0]);
-				console.log();
 			});
 		} else {
 			setVideos([]);

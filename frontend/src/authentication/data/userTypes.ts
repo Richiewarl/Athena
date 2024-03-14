@@ -4,8 +4,24 @@ export interface UserSessionData {
 	timestamp?: number;
 	username?: string;
 	fullname?: string;
-	CASAuth: boolean;
+	external_auth: boolean;
 }
+
+export interface UserProfileData {
+	id: number;
+	fullname: string;
+	username: string;
+	created_on: Date;
+	last_login: Date;
+	profile_picture: string;
+	user_role: number;
+	external_auth: boolean;
+}
+
+export type NewUserProfileData = Omit<
+	UserProfileData,
+	"id" | "created_on" | "last_login"
+>;
 
 export enum UserRole {
 	STUDENT = 0,

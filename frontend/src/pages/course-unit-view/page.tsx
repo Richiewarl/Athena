@@ -9,10 +9,8 @@ import "./page.css";
 // Context Providers
 import { VideoDataProvider } from "./context/video-provider";
 import { WeekDataProvider } from "./context/week-provider";
-import { Toaster } from "@/components/ui/toaster";
 
 export default function ContentPage() {
-	console.log(localStorage.getItem("user-data"));
 	return (
 		<div className="block border-b">
 			<div className="bg-background">
@@ -23,7 +21,6 @@ export default function ContentPage() {
 							<WeeklyContent className="col-span-3 lg:col-span-3 block" />
 							<VideoCards className="hidden lg:block" />
 						</VideoDataProvider>
-						<Toaster />
 					</WeekDataProvider>
 				</div>
 			</div>

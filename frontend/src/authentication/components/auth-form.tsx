@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 
 import { Loader2, School2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { paths } from "@/enums/paths";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -28,7 +29,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 	const navigate = useNavigate();
 	const handleUoMLogIn = () => {
 		setIsLoading(true);
-		navigate("/uomauth");
+		navigate(paths.UoMAuth);
 		setIsLoading(false);
 	};
 

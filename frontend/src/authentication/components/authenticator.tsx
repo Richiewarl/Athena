@@ -2,28 +2,35 @@ import uniqid from "uniqid";
 import { useEffect } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { UserSessionData } from "../data/userTypes";
+import { UserProfileData, UserSessionData } from "../data/userTypes";
 import { paths } from "@/enums/paths";
+import { useUser } from "../context/user-provider";
+import { createNewUser, getUserByUsername } from "../data/api";
 
 const domain: string = import.meta.env.VITE_WEB_DOMAIN;
 
-const DEVELOPER_URL = domain + "/homepage";
+const DEVELOPER_URL = domain + paths.UoMAuth;
 const AUTHENTICATION_SERVICE_URL =
 	"http://studentnet.cs.manchester.ac.uk/authenticate/";
 const AUTHENTICATION_LOGOUT_URL =
 	"http://studentnet.cs.manchester.ac.uk/systemlogout.php";
 
+// SECRISK
 const validateUser = (
 	searchParams: any,
 	location: string,
-	navigate: Function
+	navigate: Function,
+	userData: UserProfileData | null,
+	setUser: Function
 ) => {
 	const userJson = localStorage.getItem("user-data");
 	let user: UserSessionData;
-	const production_env: boolean = import.meta.env.MODE === "production";
+	const production: boolean = import.meta.env.MODE === "production";
 
 	if (userJson) {
 		user = JSON.parse(userJson);
+		console.log(searchParams.get("csticket"));
+		console.log(user.csticket);
 
 		if (!user.loggedIn) {
 			if (!user.csticket || !searchParams.get("csticket")) {
@@ -31,20 +38,13 @@ const validateUser = (
 			} else if (user.csticket != searchParams.get("csticket")) {
 				sendForAuthentication();
 			} else {
-				recordAuthenticatedUser(searchParams, location, navigate);
-				if (production_env) {
-					// !TBD! : THIS SHOULD ONLY USE isGETParametersMatchingServerAuthentication FOR AUTH VERIFICATION
-					// localhost is not valid for the UoM servers so we have to ignore that for now and relax auth during dev
-					if (isGETParametersMatchingServerAuthentication(searchParams)) {
-						return true;
-					} else {
-						invalidateUser();
-						return false;
-					}
-				} else {
-					recordAuthenticatedUser(searchParams, location, navigate);
-					return true;
-				}
+				recordAuthenticatedUser(
+					production,
+					searchParams,
+					location,
+					navigate,
+					setUser
+				);
 			}
 		} else {
 			navigate(paths.Homepage);
@@ -66,11 +66,12 @@ const sendForAuthentication = () => {
 		timestamp: undefined,
 		username: undefined,
 		fullname: undefined,
-		CASAuth: true,
+		external_auth: true,
 	};
 
 	localStorage.setItem("user-data", JSON.stringify(user));
 
+	console.log(url);
 	window.location.href = url;
 };
 
@@ -87,16 +88,13 @@ const getAuthenticationURL = (csticket: string, command: string) => {
 };
 
 export const isGETParametersMatchingServerAuthentication = (
-	searchParams: any
+	csticket: string,
+	username: string,
+	fullname: string
 ) => {
-	const csticket = searchParams.get("csticket");
-	const username = searchParams.get("username");
-	const fullname = encodeURIComponent(searchParams.get("fullname"));
-
 	let url = getAuthenticationURL(csticket, "confirm");
 	url += "&username=" + username + "&fullname=" + fullname;
 	url = url;
-	console.log(url);
 
 	fetch(url, { mode: "cors" })
 		.then((res) => {
@@ -109,32 +107,74 @@ export const isGETParametersMatchingServerAuthentication = (
 	return false;
 };
 
+// SECRISK
 const recordAuthenticatedUser = (
+	production: boolean,
 	searchParams: any,
 	location: string,
-	navigate: Function
+	navigate: Function,
+	setUser: Function
 ) => {
-	let user: UserSessionData = {
-		loggedIn:
-			import.meta.env.MODE === "production" // SECRISK
-				? isGETParametersMatchingServerAuthentication(searchParams)
-				: true,
-		csticket: searchParams.get("csticket"),
-		timestamp: new Date().getTime() / 1000, // convert from ms to s
-		username: searchParams.get("username"),
-		fullname: searchParams.get("fullname"),
-		CASAuth: true,
-	};
+	console.log("CALLED");
 
-	localStorage.setItem("user-data", JSON.stringify(user));
+	const csticket = searchParams.get("csticket");
+	const username = searchParams.get("username");
+	const fullname = searchParams.get("fullname");
 
-	if (location != paths.Homepage) {
-		navigate(paths.Homepage);
+	if (
+		production &&
+		!isGETParametersMatchingServerAuthentication(csticket, username, fullname)
+	) {
+		invalidateUser(setUser);
+		navigate(paths.LoginPage);
+	} else {
+		let user: UserSessionData = {
+			loggedIn: true,
+			csticket: csticket,
+			timestamp: new Date().getTime() / 1000, // convert from ms to s
+			username: username,
+			fullname: fullname,
+			external_auth: true,
+		};
+
+		localStorage.setItem("user-data", JSON.stringify(user));
+		setUser(user);
+
+		getUserByUsername(username)
+			.then((res) => {
+				setUser(res.data);
+
+				// if user exist go to homepage
+				if (location != paths.Homepage) {
+					navigate(paths.Homepage);
+				}
+			})
+			.catch((error) => {
+				const status = error.response.status;
+
+				// if user not found, redirect to profile settings
+				if (status == 404) {
+					setUser({
+						id: -1,
+						fullname: fullname,
+						username: username,
+						created_on: new Date(),
+						last_login: new Date(),
+						profile_picture: "",
+						user_role: -1,
+						external_auth: true,
+					});
+
+					navigate(paths.ProfileSettings);
+				}
+			});
 	}
 };
 
-export function invalidateUser() {
+export function invalidateUser(setUser: Function) {
 	localStorage.clear();
+	setUser(null);
+
 	window.location.href = AUTHENTICATION_LOGOUT_URL;
 }
 
@@ -143,9 +183,10 @@ export default function UoMAuth() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const location = useLocation().pathname;
+	const { user, setUser } = useUser();
 
 	useEffect(() => {
-		validateUser(searchParams, location, navigate);
+		validateUser(searchParams, location, navigate, user, setUser);
 	}, []);
 
 	return <></>;

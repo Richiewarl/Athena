@@ -11,28 +11,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { invalidateUser } from "@/authentication/components/authenticator";
-import { UserSessionData } from "@/authentication/data/userTypes";
 import { useNavigate } from "react-router-dom";
 import { paths } from "@/enums/paths";
 
 import { LogOut, Settings } from "lucide-react";
+import { useUser } from "@/authentication/context/user-provider";
 
 export default function UserNav() {
 	const navigate = useNavigate();
-
-	const userJson = localStorage.getItem("user-data");
-	let user: UserSessionData | null = null;
+	const { user, setUser } = useUser();
 	let initials = "N/A";
 
-	if (userJson) {
-		user = JSON.parse(userJson);
-
-		if (user && user.fullname) {
-			initials = user.fullname
-				.split(" ")
-				.map((name) => name[0].toUpperCase())
-				.join();
-		}
+	if (user && user.fullname) {
+		initials = user.fullname
+			.split(" ")
+			.map((name) => name[0].toUpperCase())
+			.join();
 	}
 
 	return (
@@ -66,7 +60,7 @@ export default function UserNav() {
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="bg-destructive text-destructive-foreground"
-					onClick={() => invalidateUser()}
+					onClick={() => invalidateUser(setUser)}
 				>
 					<LogOut className="w-5 mr-2" />
 					Log Out
