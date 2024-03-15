@@ -19,14 +19,18 @@ class CourseUnitSerializer(ModelSerializer):
         fields = ('id', 
                   'course_code', 
                   'title', 
-                  'description')
+                  'description',
+                  'created_on',
+                  'updated_on')
         
 class WeekSerializer(ModelSerializer):
     class Meta:
         model = Week
         fields = ('id', 
                   'title',
-                  'description' ,
+                  'description',
+                  'created_on',
+                  'updated_on', 
                   'course_unit')
         
 class VideoSerializer(ModelSerializer):
@@ -35,8 +39,8 @@ class VideoSerializer(ModelSerializer):
         fields = ('id', 
                   'title', 
                   'description', 
-                  'created_at',
-                  'updated_at', 
+                  'created_on',
+                  'updated_on', 
                   'link', 
                   'thumbnail', 
                   'week')
@@ -47,7 +51,8 @@ class CommentSerializer(ModelSerializer):
         fields = ('id',
                   'user',
                   'body',
-                  'created_at', 
+                  'created_on',
+                  'updated_on', 
                   'active',
                   'video', 
                   'parent_comment')
@@ -57,13 +62,13 @@ class Like(ModelSerializer):
         model = Like
         fields = ('id',
                   'user',
-                  'created_at',
-                  'updated_at')
+                  'created_on',
+                  'updated_on')
         
 class Dislike(ModelSerializer):
     class Meta:
         model = Dislike
         fields = ('id',
                   'user',
-                  'created_at',
-                  'updated_at')
+                  'created_on',
+                  'updated_on')

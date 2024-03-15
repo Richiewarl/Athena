@@ -16,6 +16,8 @@ class CourseUnit(models.Model):
     course_code = models.CharField(max_length=50, unique=True)
     title = models.CharField(max_length=300)
     description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name = 'Course Unit'
@@ -26,6 +28,8 @@ class CourseUnit(models.Model):
 class Week(models.Model):
     title = models.CharField(max_length=400)
     description = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     course_unit = models.ForeignKey(CourseUnit, on_delete=models.CASCADE)
     
     def __str__(self):
@@ -34,8 +38,8 @@ class Week(models.Model):
 class Video(models.Model):
     title = models.CharField(max_length=300)
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     link = models.CharField(max_length=1000)
     thumbnail = models.CharField(max_length=1000, blank=True)
     week = models.ForeignKey(Week, on_delete=models.CASCADE)
@@ -46,7 +50,8 @@ class Video(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
-    created_at = models.DateTimeField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     active = models.BooleanField()
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
@@ -57,8 +62,8 @@ class Comment(models.Model):
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name = 'Video Likes'
@@ -69,8 +74,8 @@ class Like(models.Model):
 class Dislike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name = 'Video Dislikes'
