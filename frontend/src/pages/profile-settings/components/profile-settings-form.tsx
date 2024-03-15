@@ -62,8 +62,8 @@ export default function ProfileForm() {
 		defaultValues: {
 			fullname: user ? user.fullname : userSessionData.fullname,
 			username: user ? user.username : userSessionData.username,
-			profile_picture: "",
-			user_role: "0",
+			profile_picture: user ? user.profile_picture : "",
+			user_role: user ? user.user_role.toString() : "0",
 		},
 	});
 

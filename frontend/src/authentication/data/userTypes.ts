@@ -22,10 +22,3 @@ export type NewUserProfileData = Omit<
 	UserProfileData,
 	"id" | "created_on" | "last_login"
 >;
-
-export enum UserRole {
-	STUDENT = 0,
-	TEACHING_ASSISTANT = 1,
-	LECTURER = 2,
-	ADMIN = 3,
-}

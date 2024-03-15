@@ -13,23 +13,26 @@ import { ThemeProvider } from "./components/theme-control/theme-provider";
 import SettingsProfilePage from "./pages/profile-settings/page";
 import { paths } from "./enums/paths";
 import { Toaster } from "./components/ui/toaster";
+import { UserDataProvider } from "./authentication/context/user-provider";
 
 function App() {
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-			<BrowserRouter>
-				<Routes>
-					<Route path={paths.LoginPage} element={<AuthenticationPage />} />
-					<Route path={paths.UoMAuth} element={<UoMAuth />} />
+			<UserDataProvider>
+				<BrowserRouter>
+					<Routes>
+						<Route path={paths.LoginPage} element={<AuthenticationPage />} />
+						<Route path={paths.UoMAuth} element={<UoMAuth />} />
 
-					<Route
-						path={paths.ProfileSettings}
-						element={<SettingsProfilePage />}
-					/>
-					<Route path={paths.Homepage} element={<Homepage />} />
-				</Routes>
-			</BrowserRouter>
-			<Toaster />
+						<Route
+							path={paths.ProfileSettings}
+							element={<SettingsProfilePage />}
+						/>
+						<Route path={paths.Homepage} element={<Homepage />} />
+					</Routes>
+				</BrowserRouter>
+				<Toaster />
+			</UserDataProvider>
 		</ThemeProvider>
 	);
 }

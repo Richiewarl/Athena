@@ -45,14 +45,17 @@ import { useForm } from "react-hook-form";
 import { getAllCourseUnits, postCourseUnit } from "../data/api";
 import { CourseUnitData } from "../data/apiTypes";
 import { useCourseUnit } from "../context/course-unit-provider";
+import { useUser } from "@/authentication/context/user-provider";
+import { UserRole } from "@/authentication/data/userDataMapper";
 
 export default function CourseUnitCombobox() {
-	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>();
+	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>([]);
 	const [selectedCourseUnit, setSelectedCourseUnit] =
-		useState<CourseUnitData | null>();
+		useState<CourseUnitData | null>(null);
 	const [open, setOpen] = useState(false);
 	const [showCreateCourseUnitDialog, setShowCreateCourseUnitDialog] =
 		useState(false);
+	const { user, setUser } = useUser();
 
 	const setCourseUnit = useCourseUnit().setCourseUnit;
 
@@ -98,6 +101,8 @@ export default function CourseUnitCombobox() {
 					title: "Course Unit Succesfully Added",
 					description: `${values.course_code}: ${values.title}`,
 				});
+				setCourseUnits([res.data, ...courseUnits]);
+				updateSelectedCourseUnit(res.data);
 			})
 			.catch((error) => {
 				toast({
@@ -106,6 +111,9 @@ export default function CourseUnitCombobox() {
 					variant: "destructive",
 				});
 			});
+
+		setShowCreateCourseUnitDialog(false);
+		form.reset();
 	};
 
 	return (
@@ -120,16 +128,22 @@ export default function CourseUnitCombobox() {
 						role="combobox"
 						aria-expanded={open}
 						className="w-[300px] justify-between"
+						disabled={
+							courseUnits.length == 0 &&
+							(user ? user.user_role : 0) < UserRole.LECTURER // disable button for student if no units to choose from
+						}
 					>
 						<span className="block overflow-hidden text-ellipsis">
-							{selectedCourseUnit
-								? `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title}`
-								: "Select course unit..."}
+							{courseUnits.length > 0
+								? selectedCourseUnit
+									? `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title}`
+									: "Select course unit..."
+								: "No course units..."}
 						</span>
 						<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className="w-[330px] p-0">
+				<PopoverContent className="w-[300px] p-0">
 					<Command loop>
 						<CommandList>
 							<CommandInput placeholder="Search course units..." />
@@ -158,23 +172,27 @@ export default function CourseUnitCombobox() {
 								))}
 							</CommandGroup>
 						</CommandList>
-						<CommandSeparator />
-						<CommandList>
-							<CommandGroup>
-								<DialogTrigger asChild>
-									<CommandItem
-										className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-										onSelect={() => {
-											setOpen(false);
-											setShowCreateCourseUnitDialog(true);
-										}}
-									>
-										<PlusCircle />
-										&nbsp; Create Course Unit
-									</CommandItem>
-								</DialogTrigger>
-							</CommandGroup>
-						</CommandList>
+						{(user ? user.user_role : 0) >= UserRole.LECTURER && (
+							<>
+								<CommandSeparator />
+								<CommandList>
+									<CommandGroup>
+										<DialogTrigger asChild>
+											<CommandItem
+												className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+												onSelect={() => {
+													setOpen(false);
+													setShowCreateCourseUnitDialog(true);
+												}}
+											>
+												<PlusCircle />
+												&nbsp; Create Course Unit
+											</CommandItem>
+										</DialogTrigger>
+									</CommandGroup>
+								</CommandList>
+							</>
+						)}
 					</Command>
 				</PopoverContent>
 			</Popover>
