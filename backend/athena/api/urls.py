@@ -8,6 +8,8 @@ athena_router.register(r'course_units', CourseUnitViewSet)
 athena_router.register(r'weeks', WeekViewSet)
 athena_router.register(r'videos', VideoViewSet)
 athena_router.register(r'comments', CommentViewSet)
+athena_router.register(r'likes', LikeViewSet)
+athena_router.register(r'dislikes', DislikeViewSet)
 
 
 urlpatterns = [

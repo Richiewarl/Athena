@@ -1,4 +1,5 @@
 from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from ..models import *
 
 class UserSerializer(ModelSerializer):
@@ -45,7 +46,8 @@ class VideoSerializer(ModelSerializer):
                   'thumbnail', 
                   'week')
         
-class CommentSerializer(ModelSerializer):
+class CommentReadSerializer(ModelSerializer):
+    user = UserSerializer()
     class Meta:
         model = Comment
         fields = ('id',
@@ -57,7 +59,19 @@ class CommentSerializer(ModelSerializer):
                   'video', 
                   'parent_comment')
         
-class Like(ModelSerializer):
+class CommentWriteSerializer(ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id',
+                  'user',
+                  'body',
+                  'created_on',
+                  'updated_on', 
+                  'active',
+                  'video', 
+                  'parent_comment')
+        
+class LikeSerializer(ModelSerializer):
     class Meta:
         model = Like
         fields = ('id',
@@ -65,7 +79,7 @@ class Like(ModelSerializer):
                   'created_on',
                   'updated_on')
         
-class Dislike(ModelSerializer):
+class DislikeSerializer(ModelSerializer):
     class Meta:
         model = Dislike
         fields = ('id',

@@ -27,13 +27,13 @@ class CourseUnit(models.Model):
     
 class Week(models.Model):
     title = models.CharField(max_length=400)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     course_unit = models.ForeignKey(CourseUnit, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f'{self.course_unit_id.course_code}: {self.title}'
+        return f'{self.course_unit.course_code}: {self.title}'
     
 class Video(models.Model):
     title = models.CharField(max_length=300)
@@ -45,7 +45,7 @@ class Video(models.Model):
     week = models.ForeignKey(Week, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f'{self.week_id.title}: {self.title}'
+        return f'{self.week.title}: {self.title}'
     
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -57,7 +57,7 @@ class Comment(models.Model):
     parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f'{self.fullname}({self.username}): {self.body}'
+        return f'{self.user}: {self.body}'
     
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

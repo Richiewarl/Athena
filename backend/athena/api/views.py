@@ -18,7 +18,7 @@ class UserViewSet(ModelViewSet):
             serializer = UserSerializer(user, many=False)
             return Response(serializer.data)
         else :
-            return Response({"detail" : "User not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class CourseUnitViewSet(ModelViewSet):
     queryset = CourseUnit.objects.all()
@@ -49,22 +49,44 @@ class VideoViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def comments(self, request, pk=None):
         video = self.get_object()
-        print(video)
+        
         # filter root comments for a video
         comments = Comment.objects.filter(video=video)
         comments = comments.filter(parent_comment_id=None)
         
-        serializer = CommentSerializer(comments, many=True)
-        return Response(serializer.data)
+        serializer = CommentReadSerializer(comments, many=True)
+        return Response(serializer.data)   
     
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = CommentWriteSerializer
     
     @action(detail=True, methods=['get'])
     def replies(self, request, pk=None):
         comment = self.get_object()
         replies = Comment.objects.filter(parent_comment=comment)
-        serializer = CommentSerializer(replies, many=True)
+        serializer = CommentReadSerializer(replies, many=True)
+        return Response(serializer.data)  
+    
+    @action(detail=True, methods=['get'])
+    def likes(self, request, pk=None):
+        comment = self.get_object()
+        likes =  Like.objects.filter(comment=comment)
+        serializer = LikeSerializer(likes, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def dislikes(self, request, pk=None):
+        comment = self.get_object()
+        dislikes =  Dislike.objects.filter(comment=comment)
+        serializer = DislikeSerializer(dislikes, many=True)
+        return Response(serializer.data)
+    
+class LikeViewSet(ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+    
+class DislikeViewSet(ModelViewSet):
+    queryset = Dislike.objects.all()
+    serializer_class = DislikeSerializer
         
