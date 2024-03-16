@@ -1,6 +1,6 @@
 import axios from "axios";
 import {
-	AddNewCommentData,
+	NewCommentData,
 	NewDislikeData,
 	NewLikeData,
 	NewVideoData,
@@ -51,8 +51,12 @@ export function deleteVideo(video_id: number) {
 }
 
 // comments
-export async function postComment(data: AddNewCommentData) {
+export async function postComment(data: NewCommentData) {
 	return axios.post(`${apiDomain}/comments/`, data);
+}
+
+export async function updateComment(data: NewCommentData, comment_id: number) {
+	return axios.put(`${apiDomain}/comments/${comment_id}/`, data);
 }
 
 export function getVideoComments(video_id: number) {

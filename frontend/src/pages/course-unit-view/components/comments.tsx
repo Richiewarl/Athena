@@ -11,17 +11,21 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 import {
-	AddNewCommentData,
+	NewCommentData,
 	CommentData,
 	VideoData,
 	mapNewCommentDataToCommentData,
 } from "../data/apiTypes";
-import { getCommentReplies, getVideoComments, postComment } from "../data/api";
+import {
+	getCommentReplies,
+	getVideoComments,
+	postComment,
+	updateComment,
+} from "../data/api";
 import {
 	ArrowDown,
 	ArrowUp,
@@ -44,6 +48,7 @@ interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
 export default function Comments({ video }: CommentProps) {
 	// initialise video comments
 	const [comments, setComments] = useState<CommentData[]>([]);
+
 	useEffect(() => {
 		getVideoComments(video.id).then((res) => {
 			setComments(res.data);
@@ -60,12 +65,13 @@ export default function Comments({ video }: CommentProps) {
 				comments={comments}
 				setReplies={null}
 				replies={[]}
-				editMode={false}
 				setEditMode={null}
 			/>
 			{comments.map((comment: CommentData) => (
 				<PostedCommentBlock
 					key={comment.id}
+					setComments={setComments}
+					comments={comments}
 					parent_comment={null}
 					comment={comment}
 					video={video}
@@ -84,7 +90,6 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	comments: CommentData[];
 	setReplies: Function | null;
 	replies: CommentData[];
-	editMode: boolean;
 	setEditMode: Function | null;
 }
 
@@ -92,15 +97,13 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 function AddCommentBlock({
 	video,
 	comment_id,
-	setOpenReplyTextbox,
 	setComments,
 	comments,
+	setOpenReplyTextbox,
 	setReplies,
 	replies,
-	editMode,
-	setEditMode,
 }: AddCommentBlockProps) {
-	const isReply: boolean = Boolean(comment_id && setOpenReplyTextbox);
+	const isReply: boolean = setOpenReplyTextbox != null;
 	const user = useUser().user;
 
 	// commenting logic
@@ -117,7 +120,7 @@ function AddCommentBlock({
 		commentText: string,
 		parent_comment_id: number | null
 	) => {
-		let newComment: AddNewCommentData = {
+		let newComment: NewCommentData = {
 			user: user ? user.id : -1,
 			body: commentText,
 			active: true,
@@ -249,16 +252,20 @@ function AddCommentBlock({
 }
 
 interface PostedCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
-	video: VideoData;
+	comments: CommentData[];
+	setComments: Function;
 	parent_comment: CommentData | null;
 	comment: CommentData;
+	video: VideoData;
 	depth: number;
 }
 
 function PostedCommentBlock({
-	video,
+	comments,
+	setComments,
 	parent_comment,
 	comment,
+	video,
 	depth,
 }: PostedCommentBlockProps) {
 	// max number of recusive levels of replies for a comment
@@ -283,39 +290,94 @@ function PostedCommentBlock({
 
 	// Edit comment
 	const [editMode, setEditMode] = useState(false);
+	const [editCommentText, setEditCommentText] = useState(comment.body);
+	const handleEditCommentChange = (
+		event: React.ChangeEvent<HTMLTextAreaElement>
+	) => {
+		setEditCommentText(event.target.value);
+	};
+
+	const editComment = (editCommentText: string) => {
+		let updatedComment: NewCommentData = {
+			user: comment.user.id,
+			body: editCommentText,
+			active: comment.active,
+			video: comment.video,
+			parent_comment: comment.parent_comment,
+		};
+
+		updateComment(updatedComment, comment.id).then((res) => {
+			let updatedComment = mapNewCommentDataToCommentData(
+				res.data,
+				comment.user
+			);
+			setComments(
+				comments.map((cmmt) => (cmmt === comment ? updatedComment : cmmt))
+			);
+			setEditMode(false);
+		});
+	};
 
 	return (
 		<div
 			onMouseEnter={() => setShowSettingButton(true)}
 			onMouseLeave={() => setShowSettingButton(false)}
 		>
-			{editMode ? (
-				<></>
-			) : (
-				<>
-					<div className="relative flex flex-row mt-5">
-						<Avatar className="h-8 w-8 mr-2">
-							<AvatarImage
-								src="https://github.com/shadcn.png"
-								alt="profile picture"
-								className="user-thumbnail"
+			<div className="relative flex flex-row mt-5">
+				<Avatar className="h-8 w-8 mr-2">
+					<AvatarImage
+						src="https://github.com/shadcn.png"
+						alt="profile picture"
+						className="user-thumbnail"
+					/>
+					<AvatarFallback>{geUsertInitials()}</AvatarFallback>
+				</Avatar>
+				<div className="w-full">
+					<div className="flex flex-row items-center">
+						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
+							{comment.user.fullname}
+						</h4>
+						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
+							@{comment.user.username}
+						</h4>
+						<p className="flex flex-row items-center text-xs mb-1 py-1 px-2 text-muted-foreground">
+							{new Date(comment.created_on).toLocaleDateString("en-GB")}
+							<Dot className="w-4" />
+							{new Date(comment.created_on).toLocaleTimeString("en-GB")}
+						</p>
+					</div>
+					{editMode ? (
+						<>
+							<Textarea
+								className="border-2 mb-2"
+								placeholder=""
+								value={editCommentText}
+								onChange={handleEditCommentChange}
 							/>
-							<AvatarFallback>{geUsertInitials()}</AvatarFallback>
-						</Avatar>
-						<div className="w-full">
-							<div className="flex flex-row items-center">
-								<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
-									{comment.user.fullname}
-								</h4>
-								<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
-									@{comment.user.username}
-								</h4>
-								<p className="flex flex-row items-center text-xs mb-1 py-1 px-2 text-muted-foreground">
-									{new Date(comment.created_on).toLocaleDateString("en-GB")}
-									<Dot className="w-4" />
-									{new Date(comment.created_on).toLocaleTimeString("en-GB")}
-								</p>
+							<div
+								id="comment-controls-block"
+								className="flex flex-row justify-end"
+							>
+								<Button
+									className="px-2 mr-2"
+									variant="secondary"
+									size="sm"
+									onClick={() => setEditMode(false)}
+								>
+									Cancel
+								</Button>
+								<Button
+									className="px-2"
+									size="sm"
+									onClick={() => editComment(editCommentText)}
+									disabled={!editCommentText.replace(/\s/g, "").length}
+								>
+									Comment
+								</Button>
 							</div>
+						</>
+					) : (
+						<>
 							<p className="mb-2">{comment.body}</p>
 							<div className="comment-controls flex flex-row">
 								<Button className="p-2" variant="ghost" size="sm">
@@ -336,42 +398,40 @@ function PostedCommentBlock({
 									&nbsp; Reply
 								</Button>
 							</div>
-						</div>
-						<DropdownMenu
-							open={showCommentSettings}
-							onOpenChange={() => {
-								setShowCommentSettings(!showCommentSettings);
+						</>
+					)}
+				</div>
+				<DropdownMenu
+					open={showCommentSettings}
+					onOpenChange={() => {
+						setShowCommentSettings(!showCommentSettings);
+					}}
+				>
+					<DropdownMenuTrigger asChild>
+						<Button
+							className="ml-auto p-1"
+							variant="ghost"
+							style={{
+								opacity: showSettingButton || showCommentSettings ? "100" : "0",
 							}}
+							onMouseEnter={() => setShowSettingButton(true)}
+							onMouseLeave={() => setShowSettingButton(false)}
+							onFocus={() => setShowSettingButton(true)}
+							onBlur={() => setShowSettingButton(false)}
 						>
-							<DropdownMenuTrigger asChild>
-								<Button
-									className="ml-auto p-1"
-									variant="ghost"
-									style={{
-										opacity:
-											showSettingButton || showCommentSettings ? "100" : "0",
-									}}
-									onMouseEnter={() => setShowSettingButton(true)}
-									onMouseLeave={() => setShowSettingButton(false)}
-									onFocus={() => setShowSettingButton(true)}
-									onBlur={() => setShowSettingButton(false)}
-								>
-									<MoreVerticalIcon className="w-5" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuItem onClick={() => setEditMode(true)}>
-									Edit
-								</DropdownMenuItem>
-								<DropdownMenuItem className="text-destructive">
-									Delete
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
-				</>
-			)}
-
+							<MoreVerticalIcon className="w-5" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end">
+						<DropdownMenuItem onClick={() => setEditMode(true)}>
+							Edit
+						</DropdownMenuItem>
+						<DropdownMenuItem className="text-destructive">
+							Delete
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			</div>
 			<div id="comment-replies-block" className="ml-10">
 				{openReplyTextbox && (
 					<AddCommentBlock
@@ -386,7 +446,6 @@ function PostedCommentBlock({
 						comments={[]}
 						setReplies={setReplies}
 						replies={replies}
-						editMode={false}
 						setEditMode={null}
 					/>
 				)}
@@ -409,6 +468,8 @@ function PostedCommentBlock({
 					replies.map((reply: CommentData) => (
 						<PostedCommentBlock
 							key={reply.id}
+							comments={comments}
+							setComments={setComments}
 							parent_comment={comment}
 							comment={reply}
 							video={video}

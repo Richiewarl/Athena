@@ -37,7 +37,7 @@ export interface CommentData {
 	parent_comment: number | null;
 }
 
-export interface AddNewCommentData {
+export interface NewCommentData {
 	user: number;
 	body: string;
 	active: boolean;
@@ -45,7 +45,7 @@ export interface AddNewCommentData {
 	parent_comment: number | null;
 }
 
-export interface NewCommentResponseData {
+export interface CommentSchema {
 	id: number;
 	user: number;
 	body: string;
@@ -57,7 +57,7 @@ export interface NewCommentResponseData {
 }
 
 export const mapNewCommentDataToCommentData = (
-	res_data: NewCommentResponseData,
+	res_data: CommentSchema,
 	user: UserProfileData | null
 ) => {
 	if (user) {

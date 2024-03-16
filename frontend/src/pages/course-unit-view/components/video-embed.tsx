@@ -27,6 +27,7 @@ import { useVideo } from "../context/video-provider";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
+import { CommentDataProvider } from "../context/comment-provide";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -132,7 +133,9 @@ export function CourseVideoMaterialEmbed({
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
-			<Comments video={video} />
+			<CommentDataProvider>
+				<Comments video={video} />
+			</CommentDataProvider>
 		</>
 	);
 }
