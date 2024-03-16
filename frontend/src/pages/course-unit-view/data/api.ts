@@ -1,5 +1,11 @@
 import axios from "axios";
-import { AddNewCommentData, NewVideoData, NewWeekData } from "./apiTypes";
+import {
+	AddNewCommentData,
+	NewDislikeData,
+	NewLikeData,
+	NewVideoData,
+	NewWeekData,
+} from "./apiTypes";
 
 const apiDomain: string = import.meta.env.VITE_API_DOMAIN;
 
@@ -19,6 +25,10 @@ export function postWeek(data: NewWeekData) {
 	return axios.post(`${apiDomain}/weeks/`, data);
 }
 
+export function deleteWeek(week_id: number) {
+	return axios.delete(`${apiDomain}/weeks/${week_id}`);
+}
+
 // video
 export function getAllVideos() {
 	return axios.get(`${apiDomain}/videos`);
@@ -36,6 +46,10 @@ export function postVideo(data: NewVideoData) {
 	return axios.post(`${apiDomain}/videos/`, data);
 }
 
+export function deleteVideo(video_id: number) {
+	return axios.delete(`${apiDomain}/videos/${video_id}`);
+}
+
 // comments
 export async function postComment(data: AddNewCommentData) {
 	return axios.post(`${apiDomain}/comments/`, data);
@@ -47,4 +61,16 @@ export function getVideoComments(video_id: number) {
 
 export function getCommentReplies(comment_id: number) {
 	return axios.get(`${apiDomain}/comments/${comment_id}/replies/`);
+}
+
+export function deleteComment(comment_id: number) {
+	return axios.delete(`${apiDomain}/comments/${comment_id}/`);
+}
+
+export function postLike(data: NewLikeData) {
+	return axios.post(`${apiDomain}/like`, data);
+}
+
+export function postDislike(data: NewDislikeData) {
+	return axios.post(`${apiDomain}/dislike`, data);
 }

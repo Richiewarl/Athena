@@ -31,7 +31,7 @@ import {
 	UserSessionData,
 } from "@/authentication/data/userTypes";
 
-import default_pfp from "../../../../public/default_pfp.svg";
+import default_pfp from "@/assets/default_pfp.svg";
 import {
 	UserRoleToIcon,
 	UserRoleToString,

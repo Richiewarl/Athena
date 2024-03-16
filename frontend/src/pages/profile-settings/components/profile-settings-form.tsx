@@ -27,6 +27,7 @@ import { createNewUser, getUserByUsername } from "@/authentication/data/api";
 import { updateUserProfile } from "../data/api";
 import { useEffect, useState } from "react";
 import { getUserSessionData } from "@/authentication/data/utils";
+import { getUrlRegEx } from "@/utils";
 
 export default function ProfileForm() {
 	const navigate = useNavigate();

@@ -20,8 +20,13 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 import { VideoData } from "../data/apiTypes";
-import { useVideo } from "../context/video-provider";
 import { Dot } from "lucide-react";
+import { deleteVideo } from "../data/api";
+import { useToast } from "@/components/ui/use-toast";
+import { useVideo } from "../context/video-provider";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/authentication/context/user-provider";
+import { UserRole } from "@/authentication/data/userDataMapper";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -47,13 +52,29 @@ export function CourseVideoMaterialEmbed({
 }: VideoEmbedProps) {
 	let size: size = "medium";
 	const [selectedSize, setSelectedSize] = useState<size>(size);
-
 	const dimensions = sizeToDemension.get(selectedSize);
 	const { width, height } = dimensions ?? { width: 660, height: 380 };
 
+	const { selectedVideo, setSelectedVideo, videos, setVideos } = useVideo();
+	const user = useUser().user;
+	const { toast } = useToast();
+
+	const handleDeleteVideo = () => {
+		deleteVideo(video.id).then((res) => {
+			toast({
+				title: "Video Succesfully Deleted",
+				description: `${video.title} has been deleted.`,
+			});
+
+			let updatedVideos = videos.filter((vid) => vid != video);
+			setVideos(updatedVideos);
+			setSelectedVideo(updatedVideos[0]);
+		});
+	};
+
 	return (
 		<>
-			<div className="flex items-center gap-2 w-min pb-2">
+			<div className="flex flex-row items-center gap-2 w-full pb-2">
 				<Label htmlFor="video-size">Size:</Label>
 				<Select
 					defaultValue="medium"
@@ -68,6 +89,15 @@ export function CourseVideoMaterialEmbed({
 						<SelectItem value="small">Small</SelectItem>
 					</SelectContent>
 				</Select>
+				{user && user.user_role >= UserRole.LECTURER && (
+					<Button
+						className="ml-auto"
+						variant="destructive"
+						onClick={handleDeleteVideo}
+					>
+						Delete Video
+					</Button>
+				)}
 			</div>
 			<iframe
 				id={id}
@@ -94,9 +124,9 @@ export function CourseVideoMaterialEmbed({
 					<AccordionTrigger>{video.title}</AccordionTrigger>
 					<AccordionContent>
 						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-2 flex flex-row">
-							{new Date(video.uploaded_at).toLocaleDateString("en-GB")}
+							{new Date(video.created_on).toLocaleDateString("en-GB")}
 							<Dot />
-							{new Date(video.uploaded_at).toLocaleTimeString("en-GB")}
+							{new Date(video.created_on).toLocaleTimeString("en-GB")}
 						</h4>
 						{video.description}
 					</AccordionContent>

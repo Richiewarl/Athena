@@ -17,6 +17,10 @@ export async function getCurrentUser() {
 		});
 }
 
+export function getUserById(userId: number) {
+	return axios.get(`${apiDomain}/users/${userId}/`);
+}
+
 export function getUserByUsername(username: string) {
 	return axios.get(`${apiDomain}/users/by_username/?username=${username}`);
 }

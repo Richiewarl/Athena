@@ -11,3 +11,7 @@ export function getAllCourseUnits() {
 export function postCourseUnit(data: NewCourseUnitData) {
 	return axios.post(`${apiDomain}/course_units/`, data);
 }
+
+export function deleteCourseUnit(id: number) {
+	return axios.delete(`${apiDomain}/course_units/${id}`);
+}
