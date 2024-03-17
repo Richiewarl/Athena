@@ -63,6 +63,7 @@ export function CourseUnitForm({
 				toast({
 					title: "Course Unit Succesfully Added",
 					description: `${values.course_code}: ${values.title}`,
+					variant: "success",
 				});
 
 				setCourseUnits([res.data, ...courseUnits]);

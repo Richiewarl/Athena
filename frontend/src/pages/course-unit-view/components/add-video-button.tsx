@@ -80,6 +80,7 @@ export function AddVideoButton() {
 					toast({
 						title: "Video Succesfully Added",
 						description: `${values.title} has been added.`,
+						variant: "success",
 					});
 
 					setVideos([res.data, ...videos]);

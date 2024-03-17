@@ -40,7 +40,7 @@ import { geUsertInitials } from "@/authentication/data/utils";
 import default_pfp from "@/assets/default_pfp.svg";
 import { UserRoleToCommentIcon } from "@/authentication/data/userDataMapper";
 import reactStringReplace from "react-string-replace";
-import { Link, createSearchParams, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { paths } from "@/enums/paths";
 
 interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -161,6 +161,7 @@ function AddCommentBlock({
 						newComment.body.length > 60
 							? newComment.body.substring(0, 60) + "..."
 							: newComment.body,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -304,6 +305,7 @@ function PostedCommentBlock({
 		/(\d+:\d+:?\d+)/g,
 		(match, i) => (
 			<Link
+				className="text-blue-400"
 				key={i}
 				to={{
 					pathname: paths.Homepage,
@@ -366,10 +368,18 @@ function PostedCommentBlock({
 				setComments(
 					comments.map((cmmt) => (cmmt === comment ? updatedComment : cmmt))
 				);
+				parent_setReplies &&
+					parent_setReplies(
+						parent_replies.map((rply) =>
+							rply === comment ? updatedComment : comment
+						)
+					);
+
 				setEditMode(false);
 				toast({
 					title: "Comment Succesfully Edited",
 					description: editCommentText,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -386,9 +396,13 @@ function PostedCommentBlock({
 		deleteComment(comment.id)
 			.then((res) => {
 				setComments(comments.filter((cmmt) => cmmt != comment));
+				parent_setReplies &&
+					parent_setReplies(parent_replies.filter((rlpy) => rlpy != comment));
+
 				toast({
 					title: "Comment Succesfully Deleted",
 					description: editCommentText,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -402,6 +416,7 @@ function PostedCommentBlock({
 
 	return (
 		<div
+			key={comment.id}
 			onMouseEnter={() => setShowSettingButton(true)}
 			onMouseLeave={() => setShowSettingButton(false)}
 		>

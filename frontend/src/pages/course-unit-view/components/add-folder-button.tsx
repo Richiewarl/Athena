@@ -74,6 +74,7 @@ export function AddWeekButton() {
 					toast({
 						title: "Folder Succesfully Added",
 						description: `${res.data.title} has been added.`,
+						variant: "success",
 					});
 
 					setWeeks([res.data, ...weeks]);

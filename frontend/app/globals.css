@@ -28,6 +28,9 @@
 		--destructive: 0 84.2% 55.2%;
 		--destructive-foreground: 0 0% 98%;
 
+		--success: 131, 100%, 95%;
+		--success-foreground: 132 58% 33%;
+
 		--manchester: 0 0% 98%;
 		--manchester-foreground: 277 53% 37%;
 
@@ -62,6 +65,9 @@
 
 		--destructive: 0 62.8% 50.6%;
 		--destructive-foreground: 0 0% 90%;
+
+		--success: 132 58% 33%;
+		--success-foreground: 131, 100%, 95%;
 
 		--manchester: 277 53% 37%;
 		--manchester-foreground: 0 0% 98%;

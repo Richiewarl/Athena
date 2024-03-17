@@ -40,6 +40,7 @@ export default function CourseUnitDetailButton({
 					toast({
 						title: "Course Unit Succesfully Deleted",
 						description: `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title} has been deleted.`,
+						variant: "success",
 					});
 
 					let updatedCourseUnits = courseUnits.filter(
