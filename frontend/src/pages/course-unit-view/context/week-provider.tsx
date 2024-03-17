@@ -6,8 +6,10 @@ type WeekDataProps = {
 };
 
 type WeekDataProviderState = {
-	week: WeekData | null;
-	setWeek: (week: WeekData | null) => void;
+	selectedWeek: WeekData | null;
+	setSelectedWeek: (week: WeekData | null) => void;
+	weeks: WeekData[];
+	setWeeks: (weeks: WeekData[]) => void;
 };
 
 const WeekDataContext = createContext<WeekDataProviderState | undefined>(
@@ -16,10 +18,13 @@ const WeekDataContext = createContext<WeekDataProviderState | undefined>(
 
 export function WeekDataProvider({ children }: WeekDataProps) {
 	const [selectedWeek, setSelectedWeek] = useState<WeekData | null>(null);
+	const [weeks, setWeeks] = useState<WeekData[]>([]);
 
 	const value = {
-		week: selectedWeek,
-		setWeek: setSelectedWeek,
+		selectedWeek: selectedWeek,
+		setSelectedWeek: setSelectedWeek,
+		weeks: weeks,
+		setWeeks: setWeeks,
 	};
 
 	return (

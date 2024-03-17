@@ -1,8 +1,6 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -10,144 +8,152 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
+	CommandList,
+	CommandSeparator,
 } from "@/components/ui/command";
+import {
+	Dialog,
+	DialogHeader,
+	DialogTrigger,
+	DialogTitle,
+	DialogDescription,
+	DialogContent,
+} from "@/components/ui/dialog";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
-import { HoverCard } from "@/components/ui/hover-card";
+
 import { getAllCourseUnits } from "../data/api";
 import { CourseUnitData } from "../data/apiTypes";
 import { useCourseUnit } from "../context/course-unit-provider";
-import { HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useMutationObserver } from "@/hooks/use-mutation-observer";
+import { useUser } from "@/authentication/context/user-provider";
+import { UserRole } from "@/authentication/data/userDataMapper";
+import { CourseUnitForm } from "./course-unit-form";
+import CourseUnitDetailButton from "./course-unit-details-button";
 
 export default function CourseUnitCombobox() {
-	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>();
-	const [selectedCourseUnit, setSelectedCourseUnit] =
-		useState<CourseUnitData | null>();
-	const [peekedCourseUnit, setPeekedCourseUnit] =
-		useState<CourseUnitData | null>();
+	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>([]);
+	const { selectedCourseUnit, setSelectedCourseUnit } = useCourseUnit();
+	const user = useUser().user;
+
 	const [open, setOpen] = useState(false);
-
-	const setCourseUnit = useCourseUnit().setCourseUnit;
-
-	function updateSelectedCourseUnit(courseUnit: CourseUnitData) {
-		setCourseUnit(courseUnit);
-		setSelectedCourseUnit(courseUnit);
-	}
+	const [showCreateCourseUnitDialog, setShowCreateCourseUnitDialog] =
+		useState(false);
 
 	useEffect(() => {
 		getAllCourseUnits().then((res) => {
 			setCourseUnits(res.data);
 
-			// set default as first course unit retrieved
-			updateSelectedCourseUnit(res.data[0]);
+			// set selected unit default as first unit retrieved
+			setSelectedCourseUnit(res.data[0]);
 		});
 	}, []);
 
-	useEffect(() => {});
-
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					role="combobox"
-					aria-expanded={open}
-					className="w-[220px] justify-between"
-				>
-					<span className="block overflow-hidden text-ellipsis">
-						{selectedCourseUnit
-							? `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title}`
-							: "Select course unit..."}
-					</span>
-					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-				</Button>
-			</PopoverTrigger>
-			<PopoverContent className="w-[300px] p-0">
-				<HoverCard>
-					<HoverCardContent
-						side="right"
-						align="start"
-						forceMount
-						className="max-w-[500px] h-auto -mt-24"
-					>
-						<div className="grid gap-2 w-auto h-auto">
-							<h4 className="font-medium leading-none">{`${peekedCourseUnit?.course_code}:`}</h4>
-							<h4 className="font-medium leading-nonm,e">
-								{peekedCourseUnit?.title}
-							</h4>
-							<div className="text-sm text-muted-foreground">
-								{peekedCourseUnit?.description}
-							</div>
-						</div>
-					</HoverCardContent>
-					<Command loop>
-						<CommandInput placeholder="Search course units..." />
-						<CommandEmpty>No course unit found</CommandEmpty>
-						{courseUnits?.map((unit: any) => (
-							<HoverCardTrigger key={unit.id}>
+		<div className="flex flex-row space-x-2 items-center">
+			<Dialog
+				open={showCreateCourseUnitDialog}
+				onOpenChange={setShowCreateCourseUnitDialog}
+			>
+				<Popover open={open} onOpenChange={setOpen}>
+					<PopoverTrigger asChild>
+						<Button
+							variant="outline"
+							role="combobox"
+							aria-expanded={open}
+							className="w-[300px] justify-between"
+							disabled={
+								courseUnits.length == 0 &&
+								(user ? user.user_role : 0) < UserRole.LECTURER // disable button for student if no units to choose from
+							}
+						>
+							<span className="block overflow-hidden text-ellipsis">
+								{courseUnits.length > 0
+									? selectedCourseUnit
+										? `${selectedCourseUnit.course_code}: ${selectedCourseUnit.title}`
+										: "Select course unit..."
+									: "No course units..."}
+							</span>
+							<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+						</Button>
+					</PopoverTrigger>
+					<PopoverContent className="w-[300px] p-0">
+						<Command loop>
+							<CommandList>
+								<CommandInput placeholder="Search course units..." />
+								<CommandEmpty>No course unit found</CommandEmpty>
 								<CommandGroup>
-									<CourseUnitItem
-										unit={unit}
-										isSelected={selectedCourseUnit === unit}
-										onSelect={() => {
-											updateSelectedCourseUnit(unit);
-											setOpen(false);
-										}}
-										onPeek={() => setPeekedCourseUnit(unit)}
-									/>
+									{courseUnits?.map((unit: any) => (
+										<CommandItem
+											key={unit.id}
+											value={`${unit.course_code}: ${unit.title}`}
+											onSelect={() => {
+												setSelectedCourseUnit(unit);
+												setOpen(false);
+											}}
+											className=""
+										>
+											<Check
+												className={cn(
+													"mr-2 h-4 w-4",
+													selectedCourseUnit === unit
+														? "opacity-100"
+														: "opacity-0"
+												)}
+											/>
+											{`${unit.course_code}: ${unit.title}`}
+										</CommandItem>
+									))}
 								</CommandGroup>
-							</HoverCardTrigger>
-						))}
-					</Command>
-				</HoverCard>
-			</PopoverContent>
-		</Popover>
-	);
-}
-
-interface CourseUnitItemProps {
-	unit: CourseUnitData;
-	isSelected: boolean;
-	onSelect: () => void;
-	onPeek: (unit: CourseUnitData) => void;
-}
-
-function CourseUnitItem({
-	unit,
-	isSelected,
-	onSelect,
-	onPeek,
-}: CourseUnitItemProps) {
-	const ref = useRef<HTMLDivElement>(null);
-
-	useMutationObserver(ref, (mutations) => {
-		for (const mutation of mutations) {
-			if (mutation.type === "attributes") {
-				if (mutation.attributeName === "aria-selected") {
-					if (ref.current?.ariaSelected) {
-						onPeek(unit);
-					}
-				}
-			}
-		}
-	});
-
-	return (
-		<CommandItem
-			key={unit.id}
-			value={`${unit.course_code}: ${unit.title}`}
-			onSelect={onSelect}
-			ref={ref}
-			className=""
-		>
-			<Check
-				className={cn("mr-2 h-4 w-4", isSelected ? "opacity-100" : "opacity-0")}
-			/>
-			{`${unit.course_code}: ${unit.title}`}
-		</CommandItem>
+							</CommandList>
+							{(user ? user.user_role : 0) >= UserRole.LECTURER && (
+								<>
+									<CommandSeparator />
+									<CommandList>
+										<CommandGroup>
+											<DialogTrigger asChild>
+												<CommandItem
+													className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+													onSelect={() => {
+														setOpen(false);
+														setShowCreateCourseUnitDialog(true);
+													}}
+												>
+													<PlusCircle />
+													&nbsp; Create Course Unit
+												</CommandItem>
+											</DialogTrigger>
+										</CommandGroup>
+									</CommandList>
+								</>
+							)}
+						</Command>
+					</PopoverContent>
+				</Popover>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Create Course Unit</DialogTitle>
+						<DialogDescription>
+							Start building your new course unit here. Give it a unit code and
+							title that stands-out, and a description defining the unit's
+							objectives.
+						</DialogDescription>
+					</DialogHeader>
+					<CourseUnitForm
+						courseUnits={courseUnits}
+						setCourseUnits={setCourseUnits}
+						setShowCreateCourseUnitDialog={setShowCreateCourseUnitDialog}
+					/>
+				</DialogContent>
+			</Dialog>
+			{selectedCourseUnit && (
+				<CourseUnitDetailButton
+					courseUnits={courseUnits}
+					setCourseUnits={setCourseUnits}
+				/>
+			)}
+		</div>
 	);
 }

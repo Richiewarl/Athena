@@ -1,14 +1,16 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import CourseUnitViewSet, WeekViewSet, VideoViewSet
+from .views import *
 
-course_unit_router = DefaultRouter()
-course_unit_router.register(r'course_units', CourseUnitViewSet)
-course_unit_router.register(r'weeks', WeekViewSet)
-course_unit_router.register(r'videos', VideoViewSet)
+athena_router = DefaultRouter()
+athena_router.register(r'users', UserViewSet)
+athena_router.register(r'course_units', CourseUnitViewSet)
+athena_router.register(r'weeks', WeekViewSet)
+athena_router.register(r'videos', VideoViewSet)
+athena_router.register(r'comments', CommentViewSet)
+athena_router.register(r'likes', LikeViewSet)
+athena_router.register(r'dislikes', DislikeViewSet)
 
 
 urlpatterns = [
-    path('weeks/<int:week_id>/videos', VideoViewSet.as_view({'get': 'vdeos'}), name='week-videos'),
-    path('course_units/<int:course_unit_id>/weeks', WeekViewSet.as_view({'get': 'vdeos'}), name='course-unit-weeks'),
 ]

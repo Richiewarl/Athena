@@ -6,8 +6,8 @@ type CourseUnitDataProps = {
 };
 
 type CourseUnitDataProviderState = {
-	courseUnit: CourseUnitData | null;
-	setCourseUnit: (video: CourseUnitData | null) => void;
+	selectedCourseUnit: CourseUnitData | null;
+	setSelectedCourseUnit: (video: CourseUnitData | null) => void;
 };
 
 const CourseUnitContext = createContext<
@@ -23,8 +23,8 @@ export function CourseUnitDataProvider({ children }: CourseUnitDataProps) {
 	}
 
 	const value = {
-		courseUnit: selectedCourseUnit,
-		setCourseUnit: test,
+		selectedCourseUnit: selectedCourseUnit,
+		setSelectedCourseUnit: setSelectedCourseUnit,
 	};
 
 	return (

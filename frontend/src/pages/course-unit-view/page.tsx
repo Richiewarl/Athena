@@ -18,7 +18,7 @@ export default function ContentPage() {
 					<WeekDataProvider>
 						<Sidebar className="hidden lg:block" />
 						<VideoDataProvider>
-							<WeeklyContent className="col-span-3 lg:col-span-3 block" />
+							<WeeklyContent className="col-span-3 lg:col-span-3 block border-x" />
 							<VideoCards className="hidden lg:block" />
 						</VideoDataProvider>
 					</WeekDataProvider>

@@ -6,8 +6,10 @@ type VideoDataProps = {
 };
 
 type VideoDataProviderState = {
-	video: VideoData | null;
-	setVideo: (video: VideoData | null) => void;
+	selectedVideo: VideoData | null;
+	setSelectedVideo: (video: VideoData | null) => void;
+	videos: VideoData[];
+	setVideos: (videos: VideoData[]) => void;
 };
 
 const VideoDataContext = createContext<VideoDataProviderState | undefined>(
@@ -16,10 +18,13 @@ const VideoDataContext = createContext<VideoDataProviderState | undefined>(
 
 export function VideoDataProvider({ children }: VideoDataProps) {
 	const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
+	const [videos, setVideos] = useState<VideoData[]>([]);
 
 	const value = {
-		video: selectedVideo,
-		setVideo: setSelectedVideo,
+		selectedVideo: selectedVideo,
+		setSelectedVideo: setSelectedVideo,
+		videos: videos,
+		setVideos: setVideos,
 	};
 
 	return (
