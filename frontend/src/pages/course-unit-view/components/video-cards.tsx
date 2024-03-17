@@ -42,7 +42,7 @@ export default function VideoCards({ className }: VideoCardsProps) {
 
 	return (
 		<div className="flex-col w-auto">
-			<ScrollArea className={cn("px-1 py-2 border-l h-[700px]", className)}>
+			<ScrollArea className={cn("px-1 py-2 h-[700px]", className)}>
 				{videos && videos.length > 0 ? (
 					videos.map((video: VideoData) => (
 						<div
@@ -83,8 +83,10 @@ export default function VideoCards({ className }: VideoCardsProps) {
 					))
 				) : (
 					<div className="flex flex-col items-center justify-center h-full text-neutral-500 mb-4">
-						<VideoOff />
-						No Videos in Folder
+						<VideoOff size={40} />
+						<h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+							No Videos in Folder
+						</h4>
 					</div>
 				)}
 				{user && user.user_role >= UserRole.LECTURER && selectedWeek && (

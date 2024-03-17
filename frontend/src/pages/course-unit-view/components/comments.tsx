@@ -60,6 +60,7 @@ export default function Comments({ video }: CommentProps) {
 				video={video}
 				parent_comment_id={null}
 				setOpenReplyTextbox={null}
+				setOpenReplies={null}
 				setComments={setComments}
 				comments={comments}
 				setReplies={null}

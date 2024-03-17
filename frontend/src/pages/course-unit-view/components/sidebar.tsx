@@ -50,7 +50,7 @@ export default function Sidebar({ className }: SidebarProps) {
 						selectedCourseUnit.title
 					) : (
 						<>
-							<FolderX />
+							<FolderX size={30} />
 							&nbsp; No Course Units
 						</>
 					)}
@@ -77,8 +77,11 @@ export default function Sidebar({ className }: SidebarProps) {
 									))
 								) : (
 									<div className="flex flex-row items-center justify-center text-neutral-500 mb-2">
-										<FolderOpen className="w-5" />
-										&nbsp; No Folders
+										<FolderOpen size={30} />
+										&nbsp;
+										<h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+											No Folders
+										</h4>
 									</div>
 								)}
 							</div>
