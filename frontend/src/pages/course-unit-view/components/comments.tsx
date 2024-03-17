@@ -37,6 +37,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/authentication/context/user-provider";
 import { geUsertInitials } from "@/authentication/data/utils";
+import default_pfp from "@/assets/default_pfp.svg";
+import { UserRoleToCommentIcon } from "@/authentication/data/userDataMapper";
 
 interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
@@ -62,7 +64,6 @@ export default function Comments({ video }: CommentProps) {
 				comments={comments}
 				setReplies={null}
 				replies={[]}
-				setEditMode={null}
 			/>
 			{comments.map((comment: CommentData) => (
 				<PostedCommentBlock
@@ -70,6 +71,7 @@ export default function Comments({ video }: CommentProps) {
 					setComments={setComments}
 					comments={comments}
 					parent_comment={null}
+					parent_setOpenReplies={null}
 					parent_setReplies={null}
 					parent_replies={[]}
 					comment={comment}
@@ -84,9 +86,10 @@ export default function Comments({ video }: CommentProps) {
 interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
 	parent_comment_id: number | null;
-	setOpenReplyTextbox: Function | null;
 	setComments: Function | null;
 	comments: CommentData[];
+	setOpenReplyTextbox: Function | null;
+	setOpenReplies: Function | null;
 	setReplies: Function | null;
 	replies: CommentData[];
 }
@@ -98,6 +101,7 @@ function AddCommentBlock({
 	setComments,
 	comments,
 	setOpenReplyTextbox,
+	setOpenReplies,
 	setReplies,
 	replies,
 }: AddCommentBlockProps) {
@@ -125,7 +129,6 @@ function AddCommentBlock({
 
 		postComment(newComment)
 			.then((res) => {
-				console.log(res);
 				if (isReply) {
 					setOpenReplyTextbox && setOpenReplyTextbox(false); // close reply textbox
 					setReplies &&
@@ -144,6 +147,9 @@ function AddCommentBlock({
 
 				// reset input text
 				setCommentText("");
+
+				// open replies automatically
+				setOpenReplies && setOpenReplies(true);
 
 				toast({
 					title: "Comment Succesfully Posted",
@@ -179,7 +185,13 @@ function AddCommentBlock({
 		<div id="add-comment-block" className="relative flex flex-row my-5">
 			<Avatar className="h-8 w-8 mr-2">
 				<AvatarImage
-					src="https://github.com/shadcn.png"
+					src={
+						user
+							? user.profile_picture == ""
+								? default_pfp
+								: user.profile_picture
+							: ""
+					}
 					alt="profile picture"
 					className="user-thumbnail"
 				/>
@@ -250,6 +262,7 @@ interface PostedCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	comments: CommentData[];
 	setComments: Function;
 	parent_comment: CommentData | null;
+	parent_setOpenReplies: Function | null;
 	parent_setReplies: Function | null;
 	parent_replies: CommentData[];
 	comment: CommentData;
@@ -261,20 +274,23 @@ function PostedCommentBlock({
 	comments,
 	setComments,
 	parent_comment,
+	parent_setOpenReplies,
 	parent_setReplies,
 	parent_replies,
 	comment,
 	video,
 	depth,
 }: PostedCommentBlockProps) {
-	console.log(depth, comment, parent_comment);
 	const { toast } = useToast();
+	const cur_user = useUser().user;
 
 	// max number of recusive levels of replies for a comment
 	const maximumDepth = 1;
 
 	// display reply textbox
 	const [openReplyTextbox, setOpenReplyTextbox] = useState<boolean>(false);
+
+	// display replies
 	const [openReplies, setOpenReplies] = useState<boolean>(false);
 
 	// initialise comment replies
@@ -360,21 +376,28 @@ function PostedCommentBlock({
 			<div className="relative flex flex-row mt-5">
 				<Avatar className="h-8 w-8 mr-2">
 					<AvatarImage
-						src="https://github.com/shadcn.png"
+						src={
+							comment.user.profile_picture == ""
+								? default_pfp
+								: comment.user.profile_picture
+						}
 						alt="profile picture"
 						className="user-thumbnail"
 					/>
 					<AvatarFallback>{geUsertInitials()}</AvatarFallback>
 				</Avatar>
 				<div className="w-full">
-					<div className="flex flex-row items-center">
-						<h4 className="scroll-m-20 text-s font-semibold tracking-tight mb-1 mr-1">
+					<div className="flex flex-row items-center mb-1">
+						<h4 className="scroll-m-20 text-s font-semibold tracking-tight">
 							{comment.user.fullname}
 						</h4>
-						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight mb-1 py-1 px-2 rounded-md bg-secondary">
+						<h4 className="scroll-m-20 text-xs font-semibold tracking-tight py-1 px-2 rounded-md bg-secondary ml-1">
 							@{comment.user.username}
 						</h4>
-						<p className="flex flex-row items-center text-xs mb-1 py-1 px-2 text-muted-foreground">
+						<span className="text-neutral-400 ml-1">
+							{UserRoleToCommentIcon[comment.user.user_role]}
+						</span>
+						<p className="flex flex-row items-center text-xs text-muted-foreground ml-2">
 							{new Date(comment.created_on).toLocaleDateString("en-GB")}
 							<Dot className="w-4" />
 							{new Date(comment.created_on).toLocaleTimeString("en-GB")}
@@ -435,39 +458,42 @@ function PostedCommentBlock({
 						</>
 					)}
 				</div>
-				<DropdownMenu
-					open={showCommentSettings}
-					onOpenChange={() => {
-						setShowCommentSettings(!showCommentSettings);
-					}}
-				>
-					<DropdownMenuTrigger asChild>
-						<Button
-							className="ml-auto p-1"
-							variant="ghost"
-							style={{
-								opacity: showSettingButton || showCommentSettings ? "100" : "0",
-							}}
-							onMouseEnter={() => setShowSettingButton(true)}
-							onMouseLeave={() => setShowSettingButton(false)}
-							onFocus={() => setShowSettingButton(true)}
-							onBlur={() => setShowSettingButton(false)}
-						>
-							<MoreVerticalIcon className="w-5" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem onClick={() => setEditMode(true)}>
-							Edit
-						</DropdownMenuItem>
-						<DropdownMenuItem
-							className="text-destructive"
-							onClick={removingComment}
-						>
-							Delete
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{cur_user?.id == comment.user.id && (
+					<DropdownMenu
+						open={showCommentSettings}
+						onOpenChange={() => {
+							setShowCommentSettings(!showCommentSettings);
+						}}
+					>
+						<DropdownMenuTrigger asChild>
+							<Button
+								className="ml-auto p-1"
+								variant="ghost"
+								style={{
+									opacity:
+										showSettingButton || showCommentSettings ? "100" : "0",
+								}}
+								onMouseEnter={() => setShowSettingButton(true)}
+								onMouseLeave={() => setShowSettingButton(false)}
+								onFocus={() => setShowSettingButton(true)}
+								onBlur={() => setShowSettingButton(false)}
+							>
+								<MoreVerticalIcon className="w-5" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={() => setEditMode(true)}>
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								className="text-destructive"
+								onClick={removingComment}
+							>
+								Delete
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
 			</div>
 			<div id="comment-replies-block" className="ml-10">
 				{openReplyTextbox && (
@@ -481,6 +507,9 @@ function PostedCommentBlock({
 								: null
 						}
 						setOpenReplyTextbox={setOpenReplyTextbox}
+						setOpenReplies={
+							depth < maximumDepth ? setOpenReplies : parent_setOpenReplies
+						}
 						setComments={null}
 						comments={[]}
 						setReplies={depth < maximumDepth ? setReplies : parent_setReplies}
@@ -509,6 +538,9 @@ function PostedCommentBlock({
 							comments={comments}
 							setComments={setComments}
 							parent_comment={depth < maximumDepth ? comment : parent_comment}
+							parent_setOpenReplies={
+								depth < maximumDepth ? setOpenReplies : parent_setOpenReplies
+							}
 							parent_setReplies={
 								depth < maximumDepth ? setReplies : parent_setReplies
 							}

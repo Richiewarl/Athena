@@ -99,7 +99,7 @@ export default function UserNav() {
 					Profile Settings
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					className="bg-destructive text-destructive-foreground"
+					className="text-destructive"
 					onClick={() => invalidateUser()}
 				>
 					<LogOut className="w-5 mr-2" />
