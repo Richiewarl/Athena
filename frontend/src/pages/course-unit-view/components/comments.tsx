@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-import {
-	UserProfileData,
-	UserSessionData,
-} from "@/authentication/data/userTypes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,6 +70,8 @@ export default function Comments({ video }: CommentProps) {
 					setComments={setComments}
 					comments={comments}
 					parent_comment={null}
+					parent_setReplies={null}
+					parent_replies={[]}
 					comment={comment}
 					video={video}
 					depth={0}
@@ -91,7 +89,6 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	comments: CommentData[];
 	setReplies: Function | null;
 	replies: CommentData[];
-	setEditMode: Function | null;
 }
 
 // Acts as input for either adding reply (comment of a comment) or comment (root comment)
@@ -253,6 +250,8 @@ interface PostedCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	comments: CommentData[];
 	setComments: Function;
 	parent_comment: CommentData | null;
+	parent_setReplies: Function | null;
+	parent_replies: CommentData[];
 	comment: CommentData;
 	video: VideoData;
 	depth: number;
@@ -262,6 +261,8 @@ function PostedCommentBlock({
 	comments,
 	setComments,
 	parent_comment,
+	parent_setReplies,
+	parent_replies,
 	comment,
 	video,
 	depth,
@@ -482,9 +483,8 @@ function PostedCommentBlock({
 						setOpenReplyTextbox={setOpenReplyTextbox}
 						setComments={null}
 						comments={[]}
-						setReplies={setReplies}
-						replies={replies}
-						setEditMode={null}
+						setReplies={depth < maximumDepth ? setReplies : parent_setReplies}
+						replies={depth < maximumDepth ? replies : parent_replies}
 					/>
 				)}
 				{replies.length > 0 && (
@@ -509,6 +509,10 @@ function PostedCommentBlock({
 							comments={comments}
 							setComments={setComments}
 							parent_comment={depth < maximumDepth ? comment : parent_comment}
+							parent_setReplies={
+								depth < maximumDepth ? setReplies : parent_setReplies
+							}
+							parent_replies={depth < maximumDepth ? replies : parent_replies}
 							comment={reply}
 							video={video}
 							depth={depth + 1}
