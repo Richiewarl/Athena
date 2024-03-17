@@ -39,6 +39,9 @@ import { useUser } from "@/authentication/context/user-provider";
 import { geUsertInitials } from "@/authentication/data/utils";
 import default_pfp from "@/assets/default_pfp.svg";
 import { UserRoleToCommentIcon } from "@/authentication/data/userDataMapper";
+import reactStringReplace from "react-string-replace";
+import { Link, createSearchParams, useSearchParams } from "react-router-dom";
+import { paths } from "@/enums/paths";
 
 interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
@@ -285,6 +288,33 @@ function PostedCommentBlock({
 	const { toast } = useToast();
 	const cur_user = useUser().user;
 
+	// detect timestamps
+	const stringToSeconds = (timestamp: string) => {
+		let arr = timestamp.split(":");
+		let seconds = 0;
+		if (arr.length == 3) {
+			seconds = +arr[0] * 60 * 60 + +arr[1] * 60 + +arr[2];
+		} else if (arr.length == 2) {
+			seconds = +arr[0] * 60 + +arr[1];
+		}
+		return seconds;
+	};
+	const commentDisplay = reactStringReplace(
+		comment.body,
+		/(\d+:\d+:?\d+)/g,
+		(match, i) => (
+			<Link
+				key={i}
+				to={{
+					pathname: paths.Homepage,
+					search: `?videoStart=${stringToSeconds(match)}&videoAutoplay=1`,
+				}}
+			>
+				{match}
+			</Link>
+		)
+	);
+
 	// max number of recusive levels of replies for a comment
 	const maximumDepth = 1;
 
@@ -310,6 +340,7 @@ function PostedCommentBlock({
 	// Editing comment
 	const [editMode, setEditMode] = useState(false);
 	const [editCommentText, setEditCommentText] = useState(comment.body);
+
 	const handleEditCommentChange = (
 		event: React.ChangeEvent<HTMLTextAreaElement>
 	) => {
@@ -436,7 +467,7 @@ function PostedCommentBlock({
 						</>
 					) : (
 						<>
-							<p className="mb-2">{comment.body}</p>
+							<p className="mb-2">{commentDisplay}</p>
 							<div className="comment-controls flex flex-row">
 								<Button className="p-2" variant="ghost" size="sm">
 									<ThumbsUp className="w-4" />

@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
 import { CommentDataProvider } from "../context/comment-provide";
+import { useSearchParams } from "react-router-dom";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -81,6 +82,15 @@ export function CourseVideoMaterialEmbed({
 			});
 	};
 
+	// apply timestamp to video
+	const [searchParams] = useSearchParams();
+	let videoLink = video.link;
+	let start = searchParams.get("videoStart");
+	let autoplay = searchParams.get("videoAutoplay");
+	if (start && autoplay && videoLink.includes("www.youtube.com")) {
+		videoLink += "&start=" + start + "&autoplay=" + autoplay;
+	}
+
 	return (
 		<>
 			<div className="flex flex-row items-center gap-2 w-full pb-2">
@@ -112,7 +122,7 @@ export function CourseVideoMaterialEmbed({
 				id={id}
 				title={video.title}
 				className={cn("", className)}
-				src={video.link}
+				src={videoLink}
 				width={width}
 				height={height}
 				style={{ overflow: "hidden" }}

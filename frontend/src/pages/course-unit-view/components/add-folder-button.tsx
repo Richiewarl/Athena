@@ -153,7 +153,7 @@ export function AddWeekButton() {
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel htmlFor="week-title-input">
-													Folder Title
+													Folder Description
 												</FormLabel>
 												<FormControl>
 													<Textarea
