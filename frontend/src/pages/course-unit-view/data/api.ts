@@ -51,12 +51,16 @@ export function deleteVideo(video_id: number) {
 }
 
 // comments
-export async function postComment(data: NewCommentData) {
+export function postComment(data: NewCommentData) {
 	return axios.post(`${apiDomain}/comments/`, data);
 }
 
-export async function updateComment(data: NewCommentData, comment_id: number) {
+export function updateComment(data: NewCommentData, comment_id: number) {
 	return axios.put(`${apiDomain}/comments/${comment_id}/`, data);
+}
+
+export function deleteComment(comment_id: number) {
+	return axios.delete(`${apiDomain}/comments/${comment_id}/`);
 }
 
 export function getVideoComments(video_id: number) {
@@ -65,10 +69,6 @@ export function getVideoComments(video_id: number) {
 
 export function getCommentReplies(comment_id: number) {
 	return axios.get(`${apiDomain}/comments/${comment_id}/replies/`);
-}
-
-export function deleteComment(comment_id: number) {
-	return axios.delete(`${apiDomain}/comments/${comment_id}/`);
 }
 
 export function postLike(data: NewLikeData) {

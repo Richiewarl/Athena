@@ -61,16 +61,24 @@ export function CourseVideoMaterialEmbed({
 	const { toast } = useToast();
 
 	const handleDeleteVideo = () => {
-		deleteVideo(video.id).then((res) => {
-			toast({
-				title: "Video Succesfully Deleted",
-				description: `${video.title} has been deleted.`,
-			});
+		deleteVideo(video.id)
+			.then((res) => {
+				toast({
+					title: "Video Succesfully Deleted",
+					description: `${video.title} has been deleted.`,
+				});
 
-			let updatedVideos = videos.filter((vid) => vid != video);
-			setVideos(updatedVideos);
-			setSelectedVideo(updatedVideos[0]);
-		});
+				let updatedVideos = videos.filter((vid) => vid != video);
+				setVideos(updatedVideos);
+				setSelectedVideo(updatedVideos[0]);
+			})
+			.catch((error) => {
+				toast({
+					title: "Uh oh! Something went wrong.",
+					description: error.message + ". We could not delete your video.",
+					variant: "destructive",
+				});
+			});
 	};
 
 	return (

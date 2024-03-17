@@ -21,6 +21,7 @@ import {
 	mapNewCommentDataToCommentData,
 } from "../data/apiTypes";
 import {
+	deleteComment,
 	getCommentReplies,
 	getVideoComments,
 	postComment,
@@ -268,6 +269,8 @@ function PostedCommentBlock({
 	video,
 	depth,
 }: PostedCommentBlockProps) {
+	const { toast } = useToast();
+
 	// max number of recusive levels of replies for a comment
 	const maximumDepth = 3;
 
@@ -288,7 +291,7 @@ function PostedCommentBlock({
 	const [showSettingButton, setShowSettingButton] = useState(false);
 	const [showCommentSettings, setShowCommentSettings] = useState(false);
 
-	// Edit comment
+	// Editing comment
 	const [editMode, setEditMode] = useState(false);
 	const [editCommentText, setEditCommentText] = useState(comment.body);
 	const handleEditCommentChange = (
@@ -306,16 +309,48 @@ function PostedCommentBlock({
 			parent_comment: comment.parent_comment,
 		};
 
-		updateComment(updatedComment, comment.id).then((res) => {
-			let updatedComment = mapNewCommentDataToCommentData(
-				res.data,
-				comment.user
-			);
-			setComments(
-				comments.map((cmmt) => (cmmt === comment ? updatedComment : cmmt))
-			);
-			setEditMode(false);
-		});
+		updateComment(updatedComment, comment.id)
+			.then((res) => {
+				let updatedComment = mapNewCommentDataToCommentData(
+					res.data,
+					comment.user
+				);
+
+				setComments(
+					comments.map((cmmt) => (cmmt === comment ? updatedComment : cmmt))
+				);
+				setEditMode(false);
+				toast({
+					title: "Comment Succesfully Edited",
+					description: editCommentText,
+				});
+			})
+			.catch((error) => {
+				toast({
+					title: "Uh oh! Something went wrong.",
+					description: error.message + ". We could not edit your comment.",
+					variant: "destructive",
+				});
+			});
+	};
+
+	// Deleting comment
+	const removingComment = () => {
+		deleteComment(comment.id)
+			.then((res) => {
+				setComments(comments.filter((cmmt) => cmmt != comment));
+				toast({
+					title: "Comment Succesfully Deleted",
+					description: editCommentText,
+				});
+			})
+			.catch((error) => {
+				toast({
+					title: "Uh oh! Something went wrong.",
+					description: error.message + ". We could not delete your comment.",
+					variant: "destructive",
+				});
+			});
 	};
 
 	return (
@@ -426,7 +461,10 @@ function PostedCommentBlock({
 						<DropdownMenuItem onClick={() => setEditMode(true)}>
 							Edit
 						</DropdownMenuItem>
-						<DropdownMenuItem className="text-destructive">
+						<DropdownMenuItem
+							className="text-destructive"
+							onClick={removingComment}
+						>
 							Delete
 						</DropdownMenuItem>
 					</DropdownMenuContent>
