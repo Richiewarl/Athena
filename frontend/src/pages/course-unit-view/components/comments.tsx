@@ -60,7 +60,7 @@ export default function Comments({ video }: CommentProps) {
 		<div id="comment-section" className="">
 			<AddCommentBlock
 				video={video}
-				comment_id={null}
+				parent_comment_id={null}
 				setOpenReplyTextbox={null}
 				setComments={setComments}
 				comments={comments}
@@ -85,7 +85,7 @@ export default function Comments({ video }: CommentProps) {
 
 interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
-	comment_id: number | null;
+	parent_comment_id: number | null;
 	setOpenReplyTextbox: Function | null;
 	setComments: Function | null;
 	comments: CommentData[];
@@ -97,7 +97,7 @@ interface AddCommentBlockProps extends React.HTMLAttributes<HTMLDivElement> {
 // Acts as input for either adding reply (comment of a comment) or comment (root comment)
 function AddCommentBlock({
 	video,
-	comment_id,
+	parent_comment_id,
 	setComments,
 	comments,
 	setOpenReplyTextbox,
@@ -117,10 +117,7 @@ function AddCommentBlock({
 		setCommentText(event.target.value);
 	};
 
-	const saveComment = (
-		commentText: string,
-		parent_comment_id: number | null
-	) => {
+	const saveComment = (commentText: string) => {
 		let newComment: NewCommentData = {
 			user: user ? user.id : -1,
 			body: commentText,
@@ -228,7 +225,7 @@ function AddCommentBlock({
 							<Button
 								className="px-2"
 								size="sm"
-								onClick={() => saveComment(commentText, comment_id)}
+								onClick={() => saveComment(commentText)}
 								disabled={!commentText.replace(/\s/g, "").length}
 							>
 								Comment
@@ -269,10 +266,11 @@ function PostedCommentBlock({
 	video,
 	depth,
 }: PostedCommentBlockProps) {
+	console.log(depth, comment, parent_comment);
 	const { toast } = useToast();
 
 	// max number of recusive levels of replies for a comment
-	const maximumDepth = 3;
+	const maximumDepth = 1;
 
 	// display reply textbox
 	const [openReplyTextbox, setOpenReplyTextbox] = useState<boolean>(false);
@@ -474,10 +472,12 @@ function PostedCommentBlock({
 				{openReplyTextbox && (
 					<AddCommentBlock
 						video={video}
-						comment_id={
-							parent_comment && depth >= maximumDepth - 1
+						parent_comment_id={
+							depth < maximumDepth
+								? comment.id
+								: parent_comment
 								? parent_comment.id
-								: comment.id
+								: null
 						}
 						setOpenReplyTextbox={setOpenReplyTextbox}
 						setComments={null}
@@ -508,7 +508,7 @@ function PostedCommentBlock({
 							key={reply.id}
 							comments={comments}
 							setComments={setComments}
-							parent_comment={comment}
+							parent_comment={depth < maximumDepth ? comment : parent_comment}
 							comment={reply}
 							video={video}
 							depth={depth + 1}
