@@ -32,8 +32,9 @@ import { useWeek } from "../context/week-provider";
 import { postVideo } from "../data/api";
 import { PlusCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getUrlRegEx } from "@/utils";
+import { getUrlRegEx, removeQueryString } from "@/utils";
 import { useVideo } from "../context/video-provider";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface AddVideoButtonProps
 	extends React.DialogHTMLAttributes<HTMLDialogElement> {}
@@ -65,7 +66,18 @@ export function AddVideoButton() {
 	});
 
 	// 3. Define a submit handler.
+	const navigate = useNavigate();
+	const location = useLocation();
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
+		removeQueryString(navigate, location);
+
+		// allow for URL extraction from a string, useful when user paste iFrame embedding
+		let match = values.link.match(/https?:\/\/[^\s"]+/);
+
+		if (match && match.length > 0) {
+			values.link = match[0];
+		}
+
 		if (selectedWeek) {
 			let newVideo: NewVideoData = {
 				title: values.title,
@@ -80,6 +92,7 @@ export function AddVideoButton() {
 					toast({
 						title: "Video Succesfully Added",
 						description: `${values.title} has been added.`,
+						variant: "success",
 					});
 
 					setVideos([res.data, ...videos]);

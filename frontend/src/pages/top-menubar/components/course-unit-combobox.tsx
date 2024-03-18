@@ -32,6 +32,9 @@ import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
 import { CourseUnitForm } from "./course-unit-form";
 import CourseUnitDetailButton from "./course-unit-details-button";
+import { useLocation, useNavigate } from "react-router-dom";
+import { WeekData } from "@/pages/course-unit-view/data/apiTypes";
+import { removeQueryString } from "@/utils";
 
 export default function CourseUnitCombobox() {
 	const [courseUnits, setCourseUnits] = useState<CourseUnitData[]>([]);
@@ -50,6 +53,16 @@ export default function CourseUnitCombobox() {
 			setSelectedCourseUnit(res.data[0]);
 		});
 	}, []);
+
+	// Switch course unit
+	const navigate = useNavigate();
+	const location = useLocation();
+	const switchWeekHandler = (unit: CourseUnitData) => {
+		// Replace the current URL without query parameters
+		removeQueryString(navigate, location);
+		setSelectedCourseUnit(unit);
+		setOpen(false);
+	};
 
 	return (
 		<div className="flex flex-row space-x-2 items-center">
@@ -90,8 +103,7 @@ export default function CourseUnitCombobox() {
 											key={unit.id}
 											value={`${unit.course_code}: ${unit.title}`}
 											onSelect={() => {
-												setSelectedCourseUnit(unit);
-												setOpen(false);
+												switchWeekHandler(unit);
 											}}
 											className=""
 										>

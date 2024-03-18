@@ -27,6 +27,7 @@ export function WeekDetailButton() {
 				toast({
 					title: "Folder Succesfully Deleted",
 					description: `${selectedWeek.title} has been deleted.`,
+					variant: "success",
 				});
 
 				let updatedWeeks = weeks.filter((week) => week != selectedWeek);

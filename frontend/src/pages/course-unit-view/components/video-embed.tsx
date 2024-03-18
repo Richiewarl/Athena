@@ -27,7 +27,8 @@ import { useVideo } from "../context/video-provider";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
-import { CommentDataProvider } from "../context/comment-provide";
+import { useSearchParams } from "react-router-dom";
+import reactStringReplace from "react-string-replace";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -66,6 +67,7 @@ export function CourseVideoMaterialEmbed({
 				toast({
 					title: "Video Succesfully Deleted",
 					description: `${video.title} has been deleted.`,
+					variant: "success",
 				});
 
 				let updatedVideos = videos.filter((vid) => vid != video);
@@ -80,6 +82,27 @@ export function CourseVideoMaterialEmbed({
 				});
 			});
 	};
+
+	// apply timestamp to video
+	const [searchParams] = useSearchParams();
+	let videoLink = video.link;
+	let start = searchParams.get("videoStart");
+	let autoplay = searchParams.get("videoAutoplay");
+
+	// only do so if youtube video and internal params are provided
+	if (start && autoplay && videoLink.includes("www.youtube.com")) {
+		let predefined_start_regex = /(&|&amp;)start=(\d+)/g;
+
+		// replace start time if already existed
+		if (videoLink.match(predefined_start_regex)) {
+			videoLink = videoLink.replace(
+				predefined_start_regex,
+				"&start=" + start + "&autoplay=" + autoplay
+			);
+		} else {
+			videoLink += "&start=" + start + "&autoplay=" + autoplay;
+		}
+	}
 
 	return (
 		<>
@@ -112,7 +135,7 @@ export function CourseVideoMaterialEmbed({
 				id={id}
 				title={video.title}
 				className={cn("", className)}
-				src={video.link}
+				src={videoLink}
 				width={width}
 				height={height}
 				style={{ overflow: "hidden" }}
@@ -141,9 +164,7 @@ export function CourseVideoMaterialEmbed({
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>
-			<CommentDataProvider>
-				<Comments video={video} />
-			</CommentDataProvider>
+			<Comments video={video} />
 		</>
 	);
 }

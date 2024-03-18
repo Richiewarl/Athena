@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
 	Card,
@@ -17,6 +17,8 @@ import { Dot, VideoOff } from "lucide-react";
 import { AddVideoButton } from "./add-video-button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
+import { useLocation, useNavigate } from "react-router-dom";
+import { removeQueryString } from "@/utils";
 
 interface VideoCardsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -40,6 +42,15 @@ export default function VideoCards({ className }: VideoCardsProps) {
 		}
 	}, [selectedWeek]);
 
+	// Switch video
+	const navigate = useNavigate();
+	const location = useLocation();
+	const switchVideoHandler = (video: VideoData) => {
+		// Replace the current URL without query parameters
+		removeQueryString(navigate, location);
+		setSelectedVideo(video);
+	};
+
 	return (
 		<div className="flex-col w-auto">
 			<ScrollArea className={cn("px-1 py-2 h-[700px]", className)}>
@@ -49,7 +60,7 @@ export default function VideoCards({ className }: VideoCardsProps) {
 							id={`video-card-${video.id}`}
 							key={video.id}
 							className="select-none clickable-video-card"
-							onClick={() => setSelectedVideo(video)}
+							onClick={() => switchVideoHandler(video)}
 						>
 							<Card
 								className={`flex flex-col gap-3 m-3 p-3 hover:cursor-pointer ${

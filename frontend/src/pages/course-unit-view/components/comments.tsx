@@ -31,6 +31,8 @@ import {
 	ThumbsUp,
 	MoreVerticalIcon,
 	Dot,
+	Trash2,
+	PenLine,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -39,6 +41,9 @@ import { useUser } from "@/authentication/context/user-provider";
 import { geUsertInitials } from "@/authentication/data/utils";
 import default_pfp from "@/assets/default_pfp.svg";
 import { UserRoleToCommentIcon } from "@/authentication/data/userDataMapper";
+import reactStringReplace from "react-string-replace";
+import { Link } from "react-router-dom";
+import { paths } from "@/enums/paths";
 
 interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
 	video: VideoData;
@@ -158,6 +163,7 @@ function AddCommentBlock({
 						newComment.body.length > 60
 							? newComment.body.substring(0, 60) + "..."
 							: newComment.body,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -285,6 +291,34 @@ function PostedCommentBlock({
 	const { toast } = useToast();
 	const cur_user = useUser().user;
 
+	// detect timestamps
+	const stringToSeconds = (timestamp: string) => {
+		let arr = timestamp.split(":");
+		let seconds = 0;
+		if (arr.length == 3) {
+			seconds = +arr[0] * 60 * 60 + +arr[1] * 60 + +arr[2];
+		} else if (arr.length == 2) {
+			seconds = +arr[0] * 60 + +arr[1];
+		}
+		return seconds;
+	};
+	const commentDisplay = reactStringReplace(
+		comment.body,
+		/(\d+:\d+:?\d+)/g,
+		(match, i) => (
+			<Link
+				className="text-blue-400"
+				key={i}
+				to={{
+					pathname: paths.Homepage,
+					search: `?videoStart=${stringToSeconds(match)}&videoAutoplay=1`,
+				}}
+			>
+				{match}
+			</Link>
+		)
+	);
+
 	// max number of recusive levels of replies for a comment
 	const maximumDepth = 1;
 
@@ -310,6 +344,7 @@ function PostedCommentBlock({
 	// Editing comment
 	const [editMode, setEditMode] = useState(false);
 	const [editCommentText, setEditCommentText] = useState(comment.body);
+
 	const handleEditCommentChange = (
 		event: React.ChangeEvent<HTMLTextAreaElement>
 	) => {
@@ -335,10 +370,18 @@ function PostedCommentBlock({
 				setComments(
 					comments.map((cmmt) => (cmmt === comment ? updatedComment : cmmt))
 				);
+				parent_setReplies &&
+					parent_setReplies(
+						parent_replies.map((rply) =>
+							rply === comment ? updatedComment : comment
+						)
+					);
+
 				setEditMode(false);
 				toast({
 					title: "Comment Succesfully Edited",
 					description: editCommentText,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -355,9 +398,13 @@ function PostedCommentBlock({
 		deleteComment(comment.id)
 			.then((res) => {
 				setComments(comments.filter((cmmt) => cmmt != comment));
+				parent_setReplies &&
+					parent_setReplies(parent_replies.filter((rlpy) => rlpy != comment));
+
 				toast({
 					title: "Comment Succesfully Deleted",
 					description: editCommentText,
+					variant: "success",
 				});
 			})
 			.catch((error) => {
@@ -371,6 +418,7 @@ function PostedCommentBlock({
 
 	return (
 		<div
+			key={comment.id}
 			onMouseEnter={() => setShowSettingButton(true)}
 			onMouseLeave={() => setShowSettingButton(false)}
 		>
@@ -436,7 +484,7 @@ function PostedCommentBlock({
 						</>
 					) : (
 						<>
-							<p className="mb-2">{comment.body}</p>
+							<p className="mb-2">{commentDisplay}</p>
 							<div className="comment-controls flex flex-row">
 								<Button className="p-2" variant="ghost" size="sm">
 									<ThumbsUp className="w-4" />
@@ -484,13 +532,15 @@ function PostedCommentBlock({
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem onClick={() => setEditMode(true)}>
-								Edit
+								<PenLine />
+								&nbsp; Edit
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className="text-destructive"
 								onClick={removingComment}
 							>
-								Delete
+								<Trash2 />
+								&nbsp; Delete
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

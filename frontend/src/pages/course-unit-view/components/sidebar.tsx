@@ -14,6 +14,8 @@ import { FolderOpen, FolderX, PlusCircle } from "lucide-react";
 import { AddWeekButton } from "./add-folder-button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
+import { useLocation, useNavigate } from "react-router-dom";
+import { removeQueryString } from "@/utils";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -37,6 +39,15 @@ export default function Sidebar({ className }: SidebarProps) {
 			setSelectedWeek(null);
 		}
 	}, [selectedCourseUnit]);
+
+	// Switch week
+	const navigate = useNavigate();
+	const location = useLocation();
+	const switchWeekHandler = (week: WeekData) => {
+		// Replace the current URL without query parameters
+		removeQueryString(navigate, location);
+		setSelectedWeek(week);
+	};
 
 	return (
 		<aside className={cn("pb-12", className)}>
@@ -68,7 +79,7 @@ export default function Sidebar({ className }: SidebarProps) {
 											variant={week == selectedWeek ? "secondary" : "ghost"}
 											className="w-full row-full justify-start font-normal"
 											key={week.id}
-											onClick={() => setSelectedWeek(week)}
+											onClick={() => switchWeekHandler(week)}
 										>
 											<span className="block overflow-hidden text-ellipsis">
 												{week.title}

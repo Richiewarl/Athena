@@ -82,6 +82,7 @@ export default function ProfileForm() {
 				.then((res) => {
 					toast({
 						description: "Profile Succesfully Saved.",
+						variant: "success",
 					});
 					navigate(paths.Homepage);
 				})
@@ -99,6 +100,7 @@ export default function ProfileForm() {
 				.then((res) => {
 					toast({
 						description: "Profile Succesfully Saved.",
+						variant: "success",
 					});
 					navigate(paths.Homepage);
 				})

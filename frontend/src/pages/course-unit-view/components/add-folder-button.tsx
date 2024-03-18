@@ -74,6 +74,7 @@ export function AddWeekButton() {
 					toast({
 						title: "Folder Succesfully Added",
 						description: `${res.data.title} has been added.`,
+						variant: "success",
 					});
 
 					setWeeks([res.data, ...weeks]);
@@ -153,7 +154,7 @@ export function AddWeekButton() {
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel htmlFor="week-title-input">
-													Folder Title
+													Folder Description
 												</FormLabel>
 												<FormControl>
 													<Textarea
