@@ -31,6 +31,8 @@ import {
 	ThumbsUp,
 	MoreVerticalIcon,
 	Dot,
+	Trash2,
+	PenLine,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -530,13 +532,15 @@ function PostedCommentBlock({
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem onClick={() => setEditMode(true)}>
-								Edit
+								<PenLine />
+								&nbsp; Edit
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								className="text-destructive"
 								onClick={removingComment}
 							>
-								Delete
+								<Trash2 />
+								&nbsp; Delete
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
