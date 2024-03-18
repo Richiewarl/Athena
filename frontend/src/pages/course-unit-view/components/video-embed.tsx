@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/authentication/context/user-provider";
 import { UserRole } from "@/authentication/data/userDataMapper";
 import { useSearchParams } from "react-router-dom";
+import reactStringReplace from "react-string-replace";
 
 interface VideoEmbedProps extends React.HTMLAttributes<HTMLIFrameElement> {
 	video: VideoData;
@@ -87,8 +88,20 @@ export function CourseVideoMaterialEmbed({
 	let videoLink = video.link;
 	let start = searchParams.get("videoStart");
 	let autoplay = searchParams.get("videoAutoplay");
+
+	// only do so if youtube video and internal params are provided
 	if (start && autoplay && videoLink.includes("www.youtube.com")) {
-		videoLink += "&start=" + start + "&autoplay=" + autoplay;
+		let predefined_start_regex = /(&|&amp;)start=(\d+)/g;
+
+		// replace start time if already existed
+		if (videoLink.match(predefined_start_regex)) {
+			videoLink = videoLink.replace(
+				predefined_start_regex,
+				"&start=" + start + "&autoplay=" + autoplay
+			);
+		} else {
+			videoLink += "&start=" + start + "&autoplay=" + autoplay;
+		}
 	}
 
 	return (
