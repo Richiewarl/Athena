@@ -5,6 +5,7 @@ import TopMenubar from "./top-menubar/top-menubar";
 // Context Providers
 import { CourseUnitDataProvider } from "./top-menubar/context/course-unit-provider";
 import AuthController from "@/authentication/components/auth-controller";
+import PageFooter from "./bottom-footer/footer";
 
 export default function Homepage() {
 	return (
@@ -13,6 +14,7 @@ export default function Homepage() {
 			<CourseUnitDataProvider>
 				<TopMenubar />
 				<ContentPage />
+				<PageFooter />
 			</CourseUnitDataProvider>
 		</>
 	);
