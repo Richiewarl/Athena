@@ -44,7 +44,7 @@ export default function EncouragementButton() {
 		<>
 			{user && (
 				<Dialog>
-					<DialogTrigger>
+					<DialogTrigger asChild>
 						<Button variant="ghost" size="icon">
 							<Sparkles />
 						</Button>
@@ -59,7 +59,7 @@ export default function EncouragementButton() {
 							<Button variant="secondary" disabled>
 								I'd like more
 							</Button>
-							<DialogClose>
+							<DialogClose asChild>
 								<Button>Continue</Button>
 							</DialogClose>
 						</DialogFooter>
