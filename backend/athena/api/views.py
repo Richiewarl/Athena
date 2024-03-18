@@ -53,6 +53,7 @@ class VideoViewSet(ModelViewSet):
         # filter root comments for a video
         comments = Comment.objects.filter(video=video)
         comments = comments.filter(parent_comment_id=None)
+        comments = comments.order_by('-created_on')
         
         serializer = CommentReadSerializer(comments, many=True)
         return Response(serializer.data)   
