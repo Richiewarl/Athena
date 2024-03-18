@@ -28,6 +28,7 @@ import { updateUserProfile } from "../data/api";
 import { useEffect, useState } from "react";
 import { getUserSessionData } from "@/authentication/data/utils";
 import { getUrlRegEx } from "@/utils";
+import { invalidateUser } from "@/authentication/components/authenticator";
 
 export default function ProfileForm() {
 	const navigate = useNavigate();
@@ -118,6 +119,7 @@ export default function ProfileForm() {
 
 	const handleCancel = () => {
 		if (!user) {
+			invalidateUser();
 			navigate(paths.LoginPage);
 		} else {
 			navigate(paths.Homepage);
