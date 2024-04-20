@@ -33,6 +33,9 @@ import {
 	Dot,
 	Trash2,
 	PenLine,
+	BadgeCheck,
+	CheckCheck,
+	X,
 } from "lucide-react";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -40,7 +43,10 @@ import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/authentication/context/user-provider";
 import { geUsertInitials } from "@/authentication/data/utils";
 import default_pfp from "@/assets/default_pfp.svg";
-import { UserRoleToCommentIcon } from "@/authentication/data/userDataMapper";
+import {
+	UserRole,
+	UserRoleToCommentIcon,
+} from "@/authentication/data/userDataMapper";
 import reactStringReplace from "react-string-replace";
 import { Link } from "react-router-dom";
 import { paths } from "@/enums/paths";
@@ -345,6 +351,9 @@ function PostedCommentBlock({
 	const [editMode, setEditMode] = useState(false);
 	const [editCommentText, setEditCommentText] = useState(comment.body);
 
+	// Comment verification
+	const [verified, setVerified] = useState(false);
+
 	const handleEditCommentChange = (
 		event: React.ChangeEvent<HTMLTextAreaElement>
 	) => {
@@ -446,6 +455,11 @@ function PostedCommentBlock({
 						<span className="text-neutral-400 ml-1">
 							{UserRoleToCommentIcon[comment.user.user_role]}
 						</span>
+						{verified && (
+							<span className="text-neutral-400 ml-1">
+								<BadgeCheck size={20} />
+							</span>
+						)}
 						<p className="flex flex-row items-center text-xs text-muted-foreground ml-2">
 							{new Date(comment.created_on).toLocaleDateString("en-GB")}
 							<Dot className="w-4" />
@@ -531,6 +545,16 @@ function PostedCommentBlock({
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
+							{cur_user.user_role == UserRole.LECTURER && (
+								<DropdownMenuItem
+									className=""
+									onClick={() => setVerified(!verified)}
+								>
+									{!verified ? <CheckCheck /> : <X />}
+									&nbsp;
+									{!verified ? "Verify" : "Remove Verification"}
+								</DropdownMenuItem>
+							)}
 							<DropdownMenuItem onClick={() => setEditMode(true)}>
 								<PenLine />
 								&nbsp; Edit

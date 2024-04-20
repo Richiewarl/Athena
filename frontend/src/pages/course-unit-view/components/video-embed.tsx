@@ -97,11 +97,13 @@ export function CourseVideoMaterialEmbed({
 		if (videoLink.match(predefined_start_regex)) {
 			videoLink = videoLink.replace(
 				predefined_start_regex,
-				"&start=" + start + "&autoplay=" + autoplay
+				"&amp;start=" + start + "&amp;autoplay=" + autoplay
 			);
 		} else {
-			videoLink += "&start=" + start + "&autoplay=" + autoplay;
+			videoLink += "&amp;start=" + start + "&amp;autoplay=" + autoplay;
 		}
+
+		console.log(videoLink);
 	}
 
 	return (

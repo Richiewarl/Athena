@@ -4,6 +4,7 @@ import CourseUnitCombobox from "./components/course-unit-combobox";
 import UserNav from "./components/user-nav";
 import NotificationButton from "./components/notification";
 import EncouragementButton from "./components/cheerleader-gpt";
+import CommunityButton from "./components/community-button";
 
 export default function TopMenubar() {
 	return (
@@ -11,6 +12,7 @@ export default function TopMenubar() {
 			<div className="flex h-14 items-center px-4 border-b">
 				<CourseUnitCombobox />
 				<div className="ml-auto flex items-center space-x-1">
+					<CommunityButton />
 					<EncouragementButton />
 					<NotificationButton />
 					<ModeToggle />
